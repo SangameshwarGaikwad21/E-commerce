@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import mongoose,{Schema,model,models} from "mongoose";
 
 export interface User{
@@ -5,6 +6,7 @@ export interface User{
     username:string,
     email:string,
     password:string,
+    role:string,
     refreshToken:string,
     createdAt:Date,
     updatedAt:Date
@@ -25,15 +27,27 @@ const userSchema=new Schema(
             type:String,
             required:[true,"username is required"]
         },
+        role:{
+            type:String,
+            enum:["user" ,"admin"],
+            default:"user"
+        },
         refreshToken:{
             type:String,
-            required:true
+            required:false
         }
     },
     {
         timestamps:true
     }
 )
+
+userSchema.pre("save",async function(){
+    if(this.isModified("password")) {
+        this.password= await bcrypt.hash(this.password,10)
+    }
+})
+
 
 const UserModel = models.User || model<User>("User", userSchema);
 export default UserModel;
