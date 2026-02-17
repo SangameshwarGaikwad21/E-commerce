@@ -35,7 +35,22 @@ const userSchema=new Schema(
         refreshToken:{
             type:String,
             required:false
-        }
+        }, 
+        addresses: {
+            type: [
+                {
+                    fullName: String,
+                    phone: String,
+                    city: String,
+                    state: String,
+                    pincode: String,
+                    country: String,
+                    street: String,
+                    isDefault: Boolean
+                }
+            ],
+      default: []
+    }
     },
     {
         timestamps:true

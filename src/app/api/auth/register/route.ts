@@ -24,7 +24,7 @@ export async function POST(request:NextRequest){
         const user= await UserModel.create({
             username:username,
             email:email,
-            password:password,
+            password:password
         })
 
         return NextResponse.json(
