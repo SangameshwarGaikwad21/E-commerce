@@ -37,41 +37,39 @@ const ProductSchema=new Schema(
             type:String,
             required:true
         },
-        brand: {
+        brand:{
             type: String,
         },
-
         stock: {
             type: Number,
             required: true,
             default: 0,
         },
+        images: [
+            {
+                type: String,
+            },
+        ],
 
-    images: [
-        {
-            type: String,
+        ratings: {
+            type: Number,
+            default: 0,
         },
-    ],
 
-    ratings: {
-        type: Number,
-        default: 0,
-    },
+        numReviews: {
+            type: Number,
+            default: 0,
+        },
 
-    numReviews: {
-        type: Number,
-        default: 0,
-    },
+        isFeatured: {
+            type: Boolean,
+            default: false,
+        },
 
-    isFeatured: {
-        type: Boolean,
-        default: false,
-    },
-
-    isPublished: {
-        type: Boolean,
-        default: true,
-    }
+        isPublished: {
+            type: Boolean,
+            default: true,
+        }
     },
     {
         timestamps:true
