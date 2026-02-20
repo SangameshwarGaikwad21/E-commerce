@@ -8,12 +8,13 @@ export async function POST(request:NextRequest) {
         await connectionToDB()
 
         const formData = await request.formData();
-
+ 
         const title = formData.get("title") as string;
         const description = formData.get("description") as string;
         const price = Number(formData.get("price"));
         const category = formData.get("category") as string;
         const images = formData.get("image") as File | null;
+        
 
         if (!title || !description || !price || !category ||  !images) {
             return NextResponse.json(
