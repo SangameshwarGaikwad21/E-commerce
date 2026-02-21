@@ -3,7 +3,7 @@ import connectionToDB from "@/config/db";
 import { Order } from "@/models/Order.models";
 import mongoose from "mongoose";
 
-export async function PATCH(req: NextRequest) {
+export async function DELETE(req: NextRequest) {
   try {
     await connectionToDB();
 
@@ -12,12 +12,11 @@ export async function PATCH(req: NextRequest) {
 
     if (!id) {
       return NextResponse.json(
-        { message: "Order ID is required" },
+        { message: "Order ID required" },
         { status: 400 }
       );
     }
 
-   
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json(
         { message: "Invalid Order ID" },
@@ -25,46 +24,22 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
-   
-    const order = await Order.findById(id);
+    const deletedOrder = await Order.findByIdAndDelete(id);
 
-    if (!order) {
+    if (!deletedOrder) {
       return NextResponse.json(
         { message: "Order not found" },
         { status: 404 }
       );
     }
 
-   
-    if (
-      order.orderStatus === "SHIPPED" ||
-      order.orderStatus === "DELIVERED"
-    ) {
-      return NextResponse.json(
-        {
-          message:
-            "Order already processed, cannot cancel",
-        },
-        { status: 400 }
-      );
-    }
-
-    
-    order.orderStatus = "CANCELLED";
-    await order.save();
-
     return NextResponse.json(
-      {
-        message: "Order Cancelled Successfully",
-        order,
-      },
+      { message: "Order deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Cancel Error:", error);
-
     return NextResponse.json(
-      { message: "Order is not cancelled" },
+      { message: "Delete failed" },
       { status: 500 }
     );
   }
