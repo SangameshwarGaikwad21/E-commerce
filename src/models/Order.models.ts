@@ -21,6 +21,7 @@ export interface IOrder extends Document {
   orderStatus:  | "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED"    | "CANCELLED";
   createdAt: Date;
   updatedAt: Date;
+  paidAt?: Date;
 }
 
 const orderItemSchema = new Schema<IOrderItem>({
@@ -92,7 +93,7 @@ const orderSchema = new Schema<IOrder>(
 
     orderStatus: {
       type: String,
-      enum: [ "PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED", ],
+      enum: [ "PENDING", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED",],
      default: "PENDING",
     },
   },
