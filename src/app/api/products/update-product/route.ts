@@ -3,10 +3,20 @@ import { uploadImageToCloudinary } from "@/utils/uploadImage";
 import connectionToDB from "@/config/db";
 import Products from "@/models/Product.models";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 export async function PATCH(request: NextRequest) {
   try {
     await connectionToDB();
+    const session = await getServerSession(authOptions);
+            
+    if (!session || session.user.role !== "admin") {
+      return NextResponse.json(
+        { message: "Admin access only" },
+        { status: 403 }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const productId = searchParams.get("productId") as string;

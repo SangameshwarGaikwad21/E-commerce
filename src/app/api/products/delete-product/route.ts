@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/config/db";
 import Products from "@/models/Product.models";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 export async function DELETE(request:NextRequest,{ params }: { params: { id: string } }) {
     try {
+      const session = await getServerSession(authOptions);
+        
+      if (!session || session.user.role !== "admin") {
+        return NextResponse.json(
+            { message: "Admin access only" },
+            { status: 403 }
+          );
+       }
+
         await connectionToDB();
         const { searchParams } = new URL(request.url);
         const productId = searchParams.get("productId");

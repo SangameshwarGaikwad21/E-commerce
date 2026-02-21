@@ -21,10 +21,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         await connectionToDB();
-        try {
-            const userExisted = await UserModel.findOne({
-                email: credentials.email,
-            });
+
+        const userExisted = await UserModel.findOne({
+          email: credentials.email,
+        });
 
         if (!userExisted) {
           throw new Error("User not registered");
@@ -38,43 +38,46 @@ export const authOptions: NextAuthOptions = {
         if (!isPasswordValid) {
           throw new Error("Invalid password");
         }
+
         return {
-          id: userExisted._id.toString(), 
+          id: userExisted._id.toString(),
           email: userExisted.email,
           username: userExisted.username,
-        };   
-        } 
-        catch (error) {
-            console.log("Auth error:", error);
-            return null;
-        }
+          role: userExisted.role, // ✅ returned
+        };
       },
     }),
   ],
-  callbacks:{
-    async jwt({token,user}) {
-        if(user){
-            token.id = user.id,
-            token.username = user.username,
-            token.email = user.email
-        }
-        return token
+
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.username = (user as any).username;
+        token.email = (user as any).email;
+        token.role = (user as any).role; // ✅ stored
+      }
+      return token;
     },
-    async session({session,token}){
-        if(session.user){
-            session.user.id = token.id as string;
-            session.user.username = token.username as string;
-            session.user.email = token.email as string;
-        }
-        return session
-    }
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.username = token.username as string;
+        session.user.email = token.email as string;
+        session.user.role = token.role as string; // ✅ exposed
+      }
+      return session;
+    },
   },
-  session:{
-    strategy: "jwt"
+
+  session: {
+    strategy: "jwt",
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
-    signIn: "/sign-in"
-  }
+    signIn: "/sign-in",
+  },
 };

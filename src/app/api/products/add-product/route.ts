@@ -2,9 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { uploadImageToCloudinary } from "@/utils/uploadImage";
 import connectionToDB from "@/config/db";
 import Products from "@/models/Product.models";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
 export async function POST(request:NextRequest) {
     try {
+        const session = await getServerSession(authOptions);
+
+        if (!session || session.user.role !== "admin") {
+        return NextResponse.json(
+            { message: "Admin access only" },
+            { status: 403 }
+        );
+    }
+
         await connectionToDB()
 
         const formData = await request.formData();
