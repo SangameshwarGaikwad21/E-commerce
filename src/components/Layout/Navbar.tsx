@@ -9,6 +9,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+
+  const isLoggedIn = false
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -23,7 +25,6 @@ const Navbar = () => {
 
   return (
     <>
-    
       <motion.header
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -35,7 +36,6 @@ const Navbar = () => {
           
           <div className="flex items-center justify-between">
 
-          
             <div className="flex items-center gap-3">
               <button
                 className="md:hidden text-white p-2"
@@ -68,21 +68,21 @@ const Navbar = () => {
                   <FaShoppingCart size={22} />
                 </div>
               </Link>
-
-  
-              <Link href="/profile" className="hidden sm:block">
-                <div className="bg-white/10 p-2 rounded-full">
-                  <User size={18} className="text-white" />
-                </div>
-              </Link>
-
-              <Button className="hidden lg:flex bg-yellow-500 text-black hover:bg-yellow-400 rounded-full">
-                Sign Up
-              </Button>
+              {isLoggedIn ? (
+                    <Link href="/profile">
+                      <div className="bg-white/10 p-2 rounded-full">
+                        <User size={18} className="text-white" />
+                      </div>
+                    </Link>
+                  ) : (
+                    <Link href="/register">
+                      <Button className="bg-yellow-500 text-black hover:bg-yellow-400 rounded-full">
+                        Register
+                      </Button>
+                    </Link>
+                  )}
             </div>
           </div>
-
-         
           <div className="mt-3 md:hidden relative">
             <Input
               placeholder="Search for products, brands..."
@@ -99,7 +99,6 @@ const Navbar = () => {
       <AnimatePresence>
         {open && (
           <>
-          
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.5 }}
@@ -129,10 +128,6 @@ const Navbar = () => {
                 <Link href="/orders">Orders</Link>
 
                 <Link href="/profile">Profile</Link>
-
-                <Button className="mt-6 hover:bg-yellow-500 bg-yellow-800 rounded-full">
-                  Sign Up
-                </Button>
               </div>
             </motion.div>
           </>
