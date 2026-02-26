@@ -1,19 +1,20 @@
 import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
-import axios from "axios";
 
 export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string }>(
-    "/products/get-products",
-    async (_, { rejectWithValue }) => {
+  "products/getProducts",
+  async (_, { rejectWithValue }) => {
     try {
-      const res = await axiosInstance.get("/products");
-      return res.data;
+      const res = await axiosInstance.get(
+        "/products/get-product"
+      );
+      return res.data.getProduct;
     } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(error.response?.data?.message || "Something went wrong");
-      }
-      return rejectWithValue("Unexpected error");
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Something went wrong"
+      );
     }
   }
 );
