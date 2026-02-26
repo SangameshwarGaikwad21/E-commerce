@@ -11,6 +11,8 @@
   "dependencies": {
     "@react-email/components": "^1.0.7",
     "@react-email/render": "^2.0.4",
+    "@reduxjs/toolkit": "^2.11.2",
+    "axios": "^1.13.5",
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.9.0",
@@ -27,6 +29,7 @@
     "react-dom": "19.2.3",
     "react-email": "^5.2.8",
     "react-icons": "^5.5.0",
+    "react-redux": "^9.2.0",
     "resend": "^6.9.2",
     "tailwind-merge": "^3.5.0"
   },
