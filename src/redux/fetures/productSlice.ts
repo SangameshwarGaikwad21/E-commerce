@@ -3,7 +3,7 @@ import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
 
 export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string }>(
-  "products/getProducts",
+        "products/getProducts",
   async (_, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(
