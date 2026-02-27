@@ -2,6 +2,18 @@ import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
 
+interface ProductState{
+    products:Product[],
+    loading:boolean,
+    error:string | null
+}
+
+const initialState: ProductState = {
+  products: [],
+  loading: false,
+  error: null,
+};
+
 export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string }>(
         "products/getProducts",
   async (_, { rejectWithValue }) => {
@@ -19,17 +31,6 @@ export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string
   }
 );
 
-interface ProductState{
-    products:Product[],
-    loading:boolean,
-    error:string | null
-}
-
-const initialState: ProductState = {
-  products: [],
-  loading: false,
-  error: null,
-};
 
 const productSlice=createSlice({
     name:"products",
