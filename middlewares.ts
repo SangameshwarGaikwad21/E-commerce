@@ -6,12 +6,26 @@ export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const token = req.nextauth.token;
     const pathname = req.nextUrl.pathname;
+    if (
+      pathname.startsWith("/api/auth/register") ||
+      pathname.startsWith("/api/auth/login")
+    ) {
+      return NextResponse.next();
+    }
 
     if (pathname.startsWith("/api/products")) {
-      if (token?.role !== "admin") {
+      if (!token || token.role !== "admin") {
         return NextResponse.json(
           { message: "Admin access only" },
           { status: 403 }
+        );
+      }
+    }
+    if (pathname.startsWith("/api/order")) {
+      if (!token) {
+        return NextResponse.json(
+          { message: "Login required" },
+          { status: 401 }
         );
       }
     }
@@ -20,14 +34,11 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: ({ token }) => !!token, 
+      authorized: () => true, // IMPORTANT 🔥
     },
   }
 );
 
 export const config = {
-  matcher: [
-    "/api/products/:path*",
-    "/api/order/:path*",
-  ],
+  matcher: ["/api/:path*"],
 };
