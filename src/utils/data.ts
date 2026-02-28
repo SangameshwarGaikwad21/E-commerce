@@ -4,7 +4,7 @@ export const heroProducts = [
     id: 1,
     name: "iPhone 15",
     price: 80000,
-    image: "/image.png",
+    image: "/iphone.jpg",
     discount: 10,
   },
   {
