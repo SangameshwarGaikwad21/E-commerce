@@ -20,6 +20,7 @@ const initialState: AuthState = {
   error: null,
 };
 
+// Register User 
 export const registerUser=createAsyncThunk<User,Register,{ rejectValue: string }>(
     "auth/register",
     async (userData, { rejectWithValue }) => {
@@ -42,17 +43,14 @@ const authSlice=createSlice({
     reducers:{},
     extraReducers:(builder)=>{
         builder
-
         .addCase(registerUser.pending,(state)=>{
             state.loading=true
             state.error=null
         })
-
         .addCase(registerUser.fulfilled,(state,action)=>{
             state.loading=false
             state.user=action.payload
         })
-
         .addCase(registerUser.rejected,(state,action)=>{
             state.loading=false,
             state.error=action.payload || "Something went wrong"

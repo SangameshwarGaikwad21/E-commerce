@@ -15,37 +15,36 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
 
-      async authorize(credentials): Promise<any> {
-        if (!credentials?.email || !credentials?.password) {
-          throw new Error("All fields are required");
+      async authorize(credentials) {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
+          }
+
+          await connectionToDB();
+
+          const userExisted = await UserModel.findOne({
+            email: credentials.email.toLowerCase(),
+          });
+
+          if (!userExisted) {
+            return null;
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            userExisted.password
+          );
+          if (!isPasswordValid) {
+            return null;
+          }
+          return {
+            id: userExisted._id.toString(),
+            email: userExisted.email,
+            username: userExisted.username,
+            password:userExisted.password,
+            role: userExisted.role,
+          };
         }
-
-        await connectionToDB();
-
-        const userExisted = await UserModel.findOne({
-          email: credentials.email,
-        });
-
-        if (!userExisted) {
-          throw new Error("User not registered");
-        }
-
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          userExisted.password
-        );
-
-        if (!isPasswordValid) {
-          throw new Error("Invalid password");
-        }
-
-        return {
-          id: userExisted._id.toString(),
-          email: userExisted.email,
-          username: userExisted.username,
-          role: userExisted.role, // ✅ returned
-        };
-      },
     }),
   ],
 

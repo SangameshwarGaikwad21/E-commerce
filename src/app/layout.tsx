@@ -5,6 +5,7 @@ import NavbarWrapper from "@/components/Layout/Navbarwrapper";
 import ReduxProvider from "@/redux/ReduxProvider";
 import { Toaster } from "react-hot-toast";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,7 +33,7 @@ export default function RootLayout({
       >
         <ReduxProvider>
           <NavbarWrapper />
-              {children}
+                {children}
               <Toaster position="top-center" />
         </ReduxProvider>
       </body>
