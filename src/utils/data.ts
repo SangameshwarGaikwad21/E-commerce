@@ -10,14 +10,14 @@ export const heroProducts = [
   {
     id: 2,
     name: "Nike Shoes",
-    price: 5000,
+    price: 90000,
     image: "/nike shoe.jpg",
     discount: 15,
   },
   {
     id: 3,
     name: "Watch",
-    price: 5000,
+    price: 10000,
     image: "/Watch.jpg",
     discount: 15,
   },
