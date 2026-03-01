@@ -1,14 +1,28 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 
-export default function LogoutPage() {
+export default function ProfilePage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!session) {
+    router.replace("/login");
+    return null;
+  }
 
   const handleLogout = async () => {
     setLoading(true);
@@ -18,28 +32,42 @@ export default function LogoutPage() {
   };
 
   const handleChangePassword = () => {
-    router.push("/forgotpassword");
+    router.push("/change-password");
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4">
+
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl text-center w-full max-w-md"
+        className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl w-full max-w-md"
       >
-        <h2 className="text-2xl font-bold text-white mb-3">
-          Account Settings ⚙️
+        <h2 className="text-2xl font-bold text-white text-center mb-6">
+          My Profile 👤
         </h2>
 
-        <p className="text-gray-400 text-sm mb-8">
-          Manage your account security or logout safely.
-        </p>
+        {/* User Info */}
+        <div className="space-y-4 mb-8">
+          <div className="bg-white/10 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Name</p>
+            <p className="text-white font-semibold">
+              {session.user?.username}
+            </p>
+          </div>
 
+          <div className="bg-white/10 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Email</p>
+            <p className="text-white font-semibold">
+              {session.user?.email}
+            </p>
+          </div>
+        </div>
+
+        {/* Buttons */}
         <div className="space-y-4">
 
-          {/* Change Password Button */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.95 }}
@@ -49,7 +77,6 @@ export default function LogoutPage() {
             🔐 Change Password
           </motion.button>
 
-          {/* Logout Button */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.95 }}
