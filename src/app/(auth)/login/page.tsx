@@ -94,16 +94,6 @@ export default function LoginPage() {
                 className="w-full mt-1 bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
-            <div className="flex justify-end text-sm -mt-2">
-                  <Link
-                    href="/forgot-password"
-                    className="text-blue-500 hover:text-blue-400 transition underline-offset-4 hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-            </div>
-
             <motion.button
               whileTap={{ scale: 0.97 }}
               type="submit"

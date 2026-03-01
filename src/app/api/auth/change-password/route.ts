@@ -51,12 +51,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
-
-    user.password = hashedPassword;
+    user.password = newPassword; 
     await user.save();
 
     return NextResponse.json({

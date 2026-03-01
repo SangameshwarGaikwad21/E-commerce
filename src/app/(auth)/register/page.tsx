@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 const page = () => {
 
@@ -36,24 +37,28 @@ const page = () => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-    try {
-      await dispatch(registerUser(form)).unwrap();
-      toast.success("User Registered Successfully ✅");
-      setForm({
-        username: "",
-        email: "",
-        password: "",
-      });
+  e.preventDefault();
 
-      setTimeout(() => {
-        router.push("/");
-      }, 1000);
+  try {
+    await dispatch(registerUser(form)).unwrap();
 
-    }  catch (err: any) {
-      toast.error(err || "Registration Failed ❌");
+    toast.success("User Registered Successfully ✅");
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      email: form.email,
+      password: form.password,
+    });
+
+    if (!result?.error) {
+      router.push("/"); 
+    } else {
+      toast.error("Login failed after registration ❌");
     }
-  };
+  } catch (err: any) {
+    toast.error(err || "Registration Failed ❌");
+  }
+};
 
 
   return (
