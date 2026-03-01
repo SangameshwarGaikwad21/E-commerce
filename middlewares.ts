@@ -6,11 +6,18 @@ export default withAuth(
   function middleware(req: NextRequestWithAuth) {
     const token = req.nextauth.token;
     const pathname = req.nextUrl.pathname;
+    
     if (
       pathname.startsWith("/api/auth/register") ||
       pathname.startsWith("/api/auth/login")
     ) {
       return NextResponse.next();
+    }
+   
+    if (pathname.startsWith("/admin")) {
+      if (!token || token.role !== "admin") {
+        return NextResponse.redirect(new URL("/", req.url));
+      }
     }
 
     if (pathname.startsWith("/api/products")) {
@@ -21,6 +28,7 @@ export default withAuth(
         );
       }
     }
+
     if (pathname.startsWith("/api/order")) {
       if (!token) {
         return NextResponse.json(
@@ -34,11 +42,14 @@ export default withAuth(
   },
   {
     callbacks: {
-      authorized: () => true, // IMPORTANT 🔥
+      authorized: () => true,
     },
   }
 );
 
 export const config = {
-  matcher: ["/api/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/:path*",
+  ],
 };

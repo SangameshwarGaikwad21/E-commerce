@@ -48,7 +48,6 @@ export default function ProfilePage() {
           My Profile 👤
         </h2>
 
-        {/* User Info */}
         <div className="space-y-4 mb-8">
           <div className="bg-white/10 p-4 rounded-xl">
             <p className="text-gray-400 text-sm">Name</p>
@@ -63,9 +62,16 @@ export default function ProfilePage() {
               {session.user?.email}
             </p>
           </div>
+
+          <div className="bg-white/10 p-4 rounded-xl">
+            <p className="text-gray-400 text-sm">Role</p>
+            <p className="text-white font-semibold">
+              {session.user?.role}
+            </p>
+          </div>
         </div>
 
-        {/* Buttons */}
+
         <div className="space-y-4">
 
           <motion.button

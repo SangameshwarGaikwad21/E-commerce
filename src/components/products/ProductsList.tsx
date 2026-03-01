@@ -2,10 +2,8 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getProducts } from "@/redux/fetures/productSlice";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const ProductList = () => {
   const dispatch = useAppDispatch();
@@ -31,68 +29,92 @@ const ProductList = () => {
       </p>
     );
 
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-6">
+return (
+ <section className="bg-white py-24">
+  <div className="max-w-7xl mx-auto px-6">
+
+    {/* Header */}
+    <div className="mb-20 text-center">
+      <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 tracking-tight">
+        Featured Collection
+      </h2>
+      <p className="text-slate-400 mt-4 text-lg">
+        Premium products crafted for performance.
+      </p>
+    </div>
+
+    {/* Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
 
       {products.map((item) => (
         <motion.div
           key={item._id}
           initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          whileHover={{ scale: 1.03 }}
+          viewport={{ once: true }}
           className="group"
         >
-          <Card className="rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden">
-            <div className="relative bg-gray-100">
+          <div className="relative rounded-3xl bg-slate-800 border border-slate-700 overflow-hidden transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl hover:border-slate-500">
 
-              <motion.img
-                src={
-                  item.images?.[0] ||
-                  "/placeholder.png"
-                }
+            {/* Image Section */}
+            <div className="relative h-72 flex items-center justify-center bg-slate-950 overflow-hidden">
+              <img
+                src={item.images?.[0] || "/placeholder.png"}
                 alt={item.title}
-                className="h-56 w-full object-contain p-6"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.3 }}
+                className="h-56 object-contain transition-transform duration-500 group-hover:scale-105"
               />
+
               {item.discount > 0 && (
-                <Badge className="absolute top-3 left-3 bg-red-500 text-white">
+                <span className="absolute top-5 left-5 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-4 py-1 rounded-full shadow-lg tracking-wide">
                   {item.discount}% OFF
-                </Badge>
+                </span>
               )}
             </div>
 
-            <CardContent className="p-4 space-y-2">
+            {/* Content */}
+            <div className="p-7 space-y-4">
 
-              <h2 className="font-semibold text-lg line-clamp-1">
+              <h3 className="text-xl font-semibold text-white line-clamp-1">
                 {item.title}
-              </h2>
+              </h3>
 
-              <p className="text-sm text-gray-500 line-clamp-2">
+              <p className="text-sm text-slate-400 line-clamp-2">
                 {item.description}
               </p>
 
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center justify-between pt-4">
 
-                <p className="text-xl font-bold text-green-600">
-                  ₹{item.price}
-                </p>
+                <div>
+                  <span className="text-2xl font-semibold text-white">
+                    ₹{item.price}
+                  </span>
 
-                <Button
-                  size="sm"
-                  className="rounded-xl"
-                >
-                  Add To Cart
-                </Button>
+                  {item.discount > 0 && (
+                    <div className="text-sm text-slate-500 line-through mt-1">
+                      ₹{Math.round(
+                        item.price / (1 - item.discount / 100)
+                      )}
+                    </div>
+                  )}
+                </div>
 
+                <button className="px-5 py-2 rounded-full bg-white text-slate-900 text-sm font-medium hover:bg-gray-200 transition-all duration-300 active:scale-95">
+                 <Link href="/cart">
+                     Add To Cart
+                 </Link>
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+          </div>
         </motion.div>
       ))}
+
     </div>
-  );
+  </div>
+</section>
+);
 };
 
 export default ProductList;

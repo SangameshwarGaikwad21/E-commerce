@@ -54,7 +54,7 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.username = (user as any).username;
         token.email = (user as any).email;
-        token.role = (user as any).role; // ✅ stored
+        token.role = (user as any).role; 
       }
       return token;
     },
@@ -77,6 +77,6 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   pages: {
-    signIn: "/sign-in",
+    signIn: "/login",
   },
 };

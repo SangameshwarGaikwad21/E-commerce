@@ -9,36 +9,39 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { status } = useSession();
+  const { status, data: session } = useSession();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated") {
-      router.replace("/");
+    if (status === "authenticated" && session?.user?.role) {
+      if (session?.user?.role === "admin") {
+        router.replace("/admin/dashboard");
+      } else {
+        router.replace("/");
+      }
     }
-  }, [status, router]);
+  }, [status, session, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const res = await signIn("credentials", {
-      redirect: false,
+    const result = await signIn("credentials", {
       email,
       password,
+      redirect: false,
     });
 
     setLoading(false);
 
-    if (res?.error) {
+    if (result?.error) {
       toast.error("Invalid email or password");
-    } else {
-      toast.success("Login successful");
-      router.replace("/");
+      return;
     }
+    toast.success("Login successful");
   };
 
   if (status === "loading") return null;
