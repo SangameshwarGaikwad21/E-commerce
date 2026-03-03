@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaShoppingCart } from "react-icons/fa";
@@ -7,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
+import { useAppSelector } from "@/redux/hooks";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -15,6 +17,14 @@ const Navbar = () => {
 
   const pathname = usePathname();
   const { data: session } = useSession();
+
+  // ✅ Get cart items from Redux
+  const cartItems = useAppSelector((state) => state.cart.items);
+
+  const totalQuantity = cartItems.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
 
   useEffect(() => {
     setMobileOpen(false);
@@ -46,7 +56,6 @@ const Navbar = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4">
-
           <div className="flex items-center justify-between">
 
             {/* Left */}
@@ -71,18 +80,36 @@ const Navbar = () => {
                 placeholder="Search products..."
                 className="py-5 rounded-full pr-16 pl-6 bg-white/10 border border-white/20 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 transition"
               />
-              <Search
-                size={20}
-                className="absolute right-5 text-gray-400"
-              />
+              <Search size={20} className="absolute right-5 text-gray-400" />
             </div>
 
+            {/* Right */}
             <div className="flex items-center gap-5">
-              <Link href="/cart" className="hidden md:block">
-                <div className="text-white p-2 hover:scale-110 transition-transform duration-200">
+
+              {/* ✅ Cart With Badge */}
+              <Link href="/cart" className="hidden md:block relative">
+                <motion.div
+                  animate={{ scale: totalQuantity ? [1, 1.2, 1] : 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-white p-2 relative hover:scale-110 transition-transform duration-200"
+                >
                   <FaShoppingCart size={22} />
-                </div>
+
+                  {totalQuantity > 0 && (
+                    <motion.span
+                      key={totalQuantity}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-[2px] rounded-full"
+                    >
+                      {totalQuantity}
+                    </motion.span>
+                  )}
+                </motion.div>
               </Link>
+
+              {/* Profile */}
               <div className="relative">
                 <button
                   onClick={() => setProfileOpen((prev) => !prev)}
@@ -152,130 +179,11 @@ const Navbar = () => {
                   )}
                 </AnimatePresence>
               </div>
-            </div>
-          </div>
 
-    
-          <div className="mt-3 md:hidden relative">
-            <Input
-              placeholder="Search products..."
-              className="py-3 pl-4 pr-10 rounded-full bg-white/10 border border-white/20 text-white placeholder:text-gray-400"
-            />
-            <Search
-              size={16}
-              className="absolute right-3 top-3 text-gray-400"
-            />
+            </div>
           </div>
         </div>
       </motion.header>
-
-<AnimatePresence>
-  {mobileOpen && (
-    <>
-     
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black z-40 md:hidden"
-        onClick={() => setMobileOpen(false)}
-      />
-
-     
-      <motion.div
-        initial={{ x: -320 }}
-        animate={{ x: 0 }}
-        exit={{ x: -320 }}
-        transition={{ duration: 0.3 }}
-        className="fixed top-0 left-0 h-full w-80 bg-black/95 backdrop-blur-xl z-50 p-6 md:hidden flex flex-col"
-      >
-    
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-white text-xl font-bold">
-            Menu
-          </h2>
-          <X
-            className="text-white cursor-pointer"
-            onClick={() => setMobileOpen(false)}
-          />
-        </div>
-
-     
-        <div className="mb-6">
-          {session ? (
-            <div className="bg-white/5 p-4 rounded-xl border border-white/10">
-              <p className="text-white font-medium">
-                {session.user.username}
-              </p>
-              <p className="text-xs text-gray-400 mt-1">
-                {session.user.role.toUpperCase()}
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              <Link
-                href="/login"
-                className="bg-white/10 py-2 rounded-lg text-center text-white hover:bg-white/20 transition"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="bg-yellow-500 py-2 rounded-lg text-center text-black font-medium hover:bg-yellow-400 transition"
-              >
-                Register
-              </Link>
-            </div>
-          )}
-        </div>
-
-     
-        <div className="border-t border-white/10 mb-6"></div>
-
-       
-        <div className="flex flex-col gap-4 text-white text-lg">
-
-          <Link
-            href="/cart"
-            className="hover:text-blue-400 transition"
-          >
-            Cart
-          </Link>
-
-          <Link
-            href="/orders"
-            className="hover:text-blue-400 transition"
-          >
-            Orders
-          </Link>
-
-          {session?.user?.role === "admin" && (
-            <Link
-              href="/admin/dashboard"
-              className="text-purple-400 hover:text-purple-300 transition"
-            >
-              Admin Dashboard
-            </Link>
-          )}
-        </div>
-
-     
-        {session && (
-          <div className="mt-auto pt-6 border-t border-white/10">
-            <button
-              onClick={() =>
-                signOut({ callbackUrl: "/login" })
-              }
-              className="w-full bg-red-500/20 text-red-400 py-2 rounded-lg hover:bg-red-500/30 transition"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
     </>
   );
 };
