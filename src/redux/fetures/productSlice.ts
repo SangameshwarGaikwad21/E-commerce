@@ -3,15 +3,23 @@ import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
 
 interface ProductState{
-    products:Product[],
-    loading:boolean,
-    error:string | null
+  products:Product[],
+  loading:boolean,
+  error:string | null
+
+  createLoading: boolean
+  createError: string | null
+  createSuccess: boolean
 }
 
 const initialState: ProductState = {
   products: [],
   loading: false,
   error: null,
+
+  createLoading: false,
+  createError: null,
+  createSuccess: false
 };
 
 export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string }>(
@@ -31,11 +39,35 @@ export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string
   }
 );
 
+export const createProduct = createAsyncThunk< Product, Partial<Product>,     
+  { rejectValue: string }>(
+  "products/createProduct",
+  async (productData, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.post(
+        "/products/add-product",
+        productData
+      );
+      return res.data.product;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to create product"
+      );
+    }
+  }
+);
 
 const productSlice=createSlice({
     name:"products",
     initialState,
-    reducers:{},
+    reducers: {
+    resetCreateState: (state) => {
+    state.createLoading = false;
+    state.createError = null;
+    state.createSuccess = false;
+      },
+    },
     extraReducers:(builder)=>{
         builder
 
@@ -52,7 +84,27 @@ const productSlice=createSlice({
             state.loading = false;
             state.error = action.payload || "Something went wrong";
         })
+
+
+        .addCase(createProduct.pending, (state) => {
+        state.createLoading = true;
+        state.createError = null;
+        state.createSuccess = false;
+      })
+
+      .addCase(createProduct.fulfilled, (state, action) => {
+        state.createLoading = false;
+        state.createSuccess = true;
+        state.products.unshift(action.payload);
+      })
+
+      .addCase(createProduct.rejected, (state, action) => {
+        state.createLoading = false;
+        state.createError =
+          action.payload || "Failed to create product";
+      });
     }
 })
 
 export default productSlice.reducer;
+export const { resetCreateState } = productSlice.actions;

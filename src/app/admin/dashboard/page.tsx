@@ -6,7 +6,7 @@ const page = () => {
   
 
   return (
-    <div>Welcome To admin
+    <div> <Link href="/">Welcome To admin</Link>
 
       <div>
         <Link href="/admin/product/create">
