@@ -39,20 +39,25 @@ export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string
   }
 );
 
-export const createProduct = createAsyncThunk< Product, Partial<Product>,     
-  { rejectValue: string }>(
+export const createProduct = createAsyncThunk<Product,FormData,{ rejectValue: string }
+  >(
   "products/createProduct",
   async (productData, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.post(
-        "/products/add-product",
-        productData
-      );
+          "/products/add-product",
+          productData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      console.log(res.data.product)
       return res.data.product;
     } catch (error: any) {
       return rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to create product"
+        error.response?.data?.message || "Failed to create product"
       );
     }
   }
@@ -85,24 +90,23 @@ const productSlice=createSlice({
             state.error = action.payload || "Something went wrong";
         })
 
-
         .addCase(createProduct.pending, (state) => {
         state.createLoading = true;
         state.createError = null;
         state.createSuccess = false;
-      })
+        })
 
-      .addCase(createProduct.fulfilled, (state, action) => {
-        state.createLoading = false;
-        state.createSuccess = true;
-        state.products.unshift(action.payload);
-      })
+        .addCase(createProduct.fulfilled, (state, action) => {
+          state.createLoading = false;
+          state.createSuccess = true;
+          state.products.unshift(action.payload);
+        })
 
-      .addCase(createProduct.rejected, (state, action) => {
-        state.createLoading = false;
-        state.createError =
-          action.payload || "Failed to create product";
-      });
+        .addCase(createProduct.rejected, (state, action) => {
+          state.createLoading = false;
+          state.createError =
+            action.payload || "Failed to create product";
+        });
     }
 })
 
