@@ -2,61 +2,82 @@
 
 import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { useAppDispatch } from "@/redux/hooks"
+import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { createProduct } from "@/redux/fetures/productSlice"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import toast from "react-hot-toast"
 
 export default function Page() {
 
-  const dispatch = useAppDispatch()
+      const dispatch = useAppDispatch()
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    price: 0,
-    category: "",
-    image: null as File | null
-  })
+      const { createLoading } = useAppSelector((state) => state.product)
 
-  const [preview, setPreview] = useState<string | null>(null)
+      const [form, setForm] = useState({
+        title: "",
+        description: "",
+        price: 0,
+        category: "",
+        image: null as File | null
+      })
 
-  const handleProductCreate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+      const [preview, setPreview] = useState<string | null>(null)
 
-    setForm({
-      ...form,
-      [name]: name === "price" ? Number(value) : value
-    })
-  }
+      const handleProductCreate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+        setForm({
+          ...form,
+          [name]: name === "price" ? Number(value) : value
+        })
+      }
 
-    setForm({ ...form, image: file })
-    setPreview(URL.createObjectURL(file))
-  }
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
 
-  const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault()
+      setForm({ ...form, image: file })
+      setPreview(URL.createObjectURL(file))
+    }
 
-  const formData = new FormData()
+      const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
 
-  formData.append("title", form.title)
-  formData.append("description", form.description)
-  formData.append("price", String(form.price))
-  formData.append("category", form.category)
+        const formData = new FormData()
 
-  if (form.image) {
-    formData.append("image", form.image)
-  }
+        formData.append("title", form.title)
+        formData.append("description", form.description)
+        formData.append("price", String(form.price))
+        formData.append("category", form.category)
 
-  dispatch(createProduct(formData))
-}
+        if (form.image) {
+          formData.append("image", form.image)
+        }
+
+        try {
+          await dispatch(createProduct(formData)).unwrap()
+
+          toast.success("Product Created Successfully")
+
+        
+          setForm({
+            title: "",
+            description: "",
+            price: 0,
+            category: "",
+            image: null
+          })
+
+          setPreview(null)
+
+        } catch (error) {
+          toast.error("Failed to create product")
+        }
+      }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-muted/40 p-6">
@@ -141,9 +162,9 @@ export default function Page() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full">
-                Create Product
-              </Button>
+              <Button type="submit" disabled={createLoading} className="w-full">
+  {createLoading ? "Creating..." : "Create Product"}
+</Button>
 
             </form>
 

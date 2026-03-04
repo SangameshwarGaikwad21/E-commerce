@@ -5,64 +5,57 @@ import Products from "@/models/Product.models";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function POST(request: NextRequest) {
-  try {
+export async function POST(request:NextRequest) {
+    try {
+        const session = await getServerSession(authOptions);
 
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "admin") {
-      return NextResponse.json(
-        { message: "Admin access only" },
-        { status: 403 }
-      );
+        if (!session || session.user.role !== "admin") {
+        return NextResponse.json(
+            { message: "Admin access only" },
+            { status: 403 }
+        );
     }
 
-    await connectionToDB();
+        await connectionToDB()
 
-    const formData = await request.formData();
+        const formData = await request.formData();
+ 
+        const title = formData.get("title") as string;
+        const description = formData.get("description") as string;
+        const price = Number(formData.get("price"));
+        const category = formData.get("category") as string;
+        const images = formData.get("image") as File | null;
+       
 
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const price = Number(formData.get("price"));
-    const category = formData.get("category") as string;
-    const images = formData.get("image") as File;
+        if (!title || !description || !price || !category ||  !images) {
+            return NextResponse.json(
+            { error: "All required fields must be filled" },
+            { status: 400 }
+        )}
 
-    if (!title || !description || !category || !images || isNaN(price)) {
-      return NextResponse.json(
-        { error: "All required fields must be filled" },
-        { status: 400 }
-      );
+        const uploadOnCloudinary= await uploadImageToCloudinary(images)
+
+        const newProduct=await Products.create({
+            title,
+            description,
+            price,
+            category,
+            images: [uploadOnCloudinary.secure_url]
+        })
+
+        return NextResponse.json(
+            {
+                message:"Product is created Successfully",
+                prodct:newProduct
+            },
+            {status:201}
+        )
+
+    } 
+    catch (error) {
+        return NextResponse.json(
+            {message:"Product is not created",error},
+            {status:500}
+        )    
     }
-
-    const uploadOnCloudinary = await uploadImageToCloudinary(images);
-
-    const newProduct = await Products.create({
-      title,
-      description,
-      price,
-      category,
-      image: {
-        url: uploadOnCloudinary.secure_url,
-        public_id: uploadOnCloudinary.public_id,
-      },
-    });
-
-    return NextResponse.json(
-      {
-        message: "Product is created Successfully",
-        product: newProduct
-      },
-      { status: 201 }
-    );
-
-  } catch (error) {
-
-    console.error("Create Product Error:", error);
-
-    return NextResponse.json(
-      { message: "Product is not created" },
-      { status: 500 }
-    );
-
-  }
 }
