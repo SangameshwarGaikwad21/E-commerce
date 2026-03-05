@@ -4,9 +4,6 @@ import { useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { getSingleProduct } from "@/redux/fetures/productSlice"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { addToCart } from "@/redux/fetures/cartSlice"
 import { useSession } from "next-auth/react"
 
@@ -31,9 +28,7 @@ export default function SingleProduct() {
   if (loading)
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-lg text-muted-foreground animate-pulse">
-          Loading product...
-        </p>
+        <p className="text-gray-500">Loading product...</p>
       </div>
     )
 
@@ -45,115 +40,98 @@ export default function SingleProduct() {
     )
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-24">
-      <div className="max-w-7xl mx-auto px-6">
 
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
+<section className="min-h-screen bg-gray-100 py-12">
 
-          {/* Product Image */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex justify-center"
-          >
-            <Card className="relative p-12 rounded-3xl bg-white shadow-xl border w-full max-w-lg">
+<div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
 
-              <motion.img
-                src={product?.images?.[0] || "/placeholder.png"}
-                alt={product?.title}
-                className="w-full max-h-[420px] object-contain mx-auto"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.3 }}
-              />
+<div className="grid md:grid-cols-2 gap-10 items-start">
 
-            </Card>
-          </motion.div>
 
-          {/* Product Info */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="space-y-6"
-          >
+{/* PRODUCT IMAGE */}
 
-            <span className="text-sm uppercase tracking-widest text-gray-500">
-              Premium Collection
-            </span>
+<div className="flex justify-center">
 
-            <h1 className="text-4xl font-bold text-gray-900">
-              {product?.title}
-            </h1>
+<img
+src={product?.images?.[0] || "/placeholder.png"}
+alt={product?.title}
+className="max-h-[400px] object-contain"
+/>
 
-            <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
-              {product?.description}
-            </p>
+</div>
 
-            {/* Price */}
-            <div className="flex items-center gap-4 pt-2">
-              <span className="text-4xl font-bold text-black">
-                ₹{product?.price}
-              </span>
 
-              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                In Stock
-              </span>
-            </div>
+{/* PRODUCT DETAILS */}
 
-            {/* Buttons */}
-            <div className="flex gap-4 pt-4">
+<div className="space-y-6">
 
-              <Button
-                size="lg"
-                className="px-8 py-6 rounded-full shadow-md"
-                onClick={() => {
-                  if (!product) return
+<h1 className="text-3xl font-semibold text-gray-900">
+{product?.title}
+</h1>
 
-                  if (!session) {
-                    router.push("/login")
-                    return
-                  }
 
-                  dispatch(
-                    addToCart({
-                      id: product._id,
-                      title: product.title,
-                      price: Number(product.price),
-                      image:
-                        product.images?.[0] || "/placeholder.png",
-                    })
-                  )
-                }}
-              >
-                Add to Cart
-              </Button>
+<p className="text-2xl font-bold text-gray-900">
+₹{product?.price}
+</p>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="px-8 py-6 rounded-full"
-              >
-                Buy Now
-              </Button>
 
-            </div>
+<p className="text-gray-600 leading-relaxed">
+{product?.description}
+</p>
 
-            {/* Trust badges */}
-            <div className="grid grid-cols-2 gap-4 pt-8 text-sm text-gray-500">
 
-              <div>🚚 Free Shipping</div>
-              <div>🔒 Secure Payment</div>
-              <div>↩ 30-Day Returns</div>
-              <div>⭐ Top Rated</div>
+{/* BUTTONS */}
 
-            </div>
+<div className="flex gap-4 pt-4">
 
-          </motion.div>
+<button
+className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-md"
+onClick={() => {
 
-        </div>
+if (!product) return
 
-      </div>
-    </section>
+if (!session) {
+router.push("/login")
+return
+}
+
+dispatch(
+addToCart({
+id: product._id,
+title: product.title,
+price: Number(product.price),
+image: product.images?.[0] || "/placeholder.png",
+})
+)
+
+}}
+>
+
+Add to Cart
+
+</button>
+
+
+<button
+className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-md"
+>
+
+Buy Now
+
+</button>
+
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</section>
+
   )
+
 }
