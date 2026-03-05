@@ -6,7 +6,10 @@ const page = () => {
   
 
   return (
-    <div> <Link href="/">Welcome To admin</Link>
+    <div> 
+      <Link href="/">
+        Welcome To admin
+      </Link>
 
       <div>
         <Link href="/admin/product/create">
@@ -17,4 +20,4 @@ const page = () => {
   )
 }
 
-export default page
+export default page;

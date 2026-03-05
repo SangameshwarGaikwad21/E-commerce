@@ -1,10 +1,8 @@
 "use client"
-
 import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { useAppDispatch, useAppSelector } from "@/redux/hooks"
 import { createProduct } from "@/redux/fetures/productSlice"
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,10 +58,7 @@ export default function Page() {
 
         try {
           await dispatch(createProduct(formData)).unwrap()
-
           toast.success("Product Created Successfully")
-
-        
           setForm({
             title: "",
             description: "",
@@ -71,107 +66,120 @@ export default function Page() {
             category: "",
             image: null
           })
-
           setPreview(null)
-
         } catch (error) {
           toast.error("Failed to create product")
         }
       }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-muted/40 p-6">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-6">
 
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 60 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-lg"
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-xl"
       >
 
-        <Card className="shadow-xl border">
+    <Card className="bg-white/70 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl">
 
-          <CardHeader>
-            <CardTitle className="text-2xl font-semibold">
-              Create Product
-            </CardTitle>
-          </CardHeader>
+      <CardHeader className="text-center space-y-2">
+        <CardTitle className="text-3xl font-bold tracking-tight">
+          Create Product
+        </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Add a new product to your store
+        </p>
+      </CardHeader>
 
-          <CardContent>
+      <CardContent>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label className="font-medium">Product Title</Label>
+            <Input
+              name="title"
+              placeholder="Enter product title"
+              value={form.title}
+              onChange={handleProductCreate}
+              className="h-11 rounded-lg"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label>Product Title</Label>
-                <Input
-                  name="title"
-                  placeholder="Enter product title"
-                  value={form.title}
-                  onChange={handleProductCreate}
+        
+          <div className="space-y-2">
+            <Label className="font-medium">Description</Label>
+            <Input
+              name="description"
+              placeholder="Enter description"
+              value={form.description}
+              onChange={handleProductCreate}
+              className="h-11 rounded-lg"
+            />
+          </div>
+
+    
+          <div className="grid grid-cols-2 gap-4">
+
+            <div className="space-y-2">
+              <Label className="font-medium">Price</Label>
+              <Input
+                name="price"
+                type="number"
+                placeholder="Enter price"
+                value={form.price}
+                onChange={handleProductCreate}
+                className="h-11 rounded-lg"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="font-medium">Category</Label>
+              <Input
+                name="category"
+                placeholder="Enter category"
+                value={form.category}
+                onChange={handleProductCreate}
+                className="h-11 rounded-lg"
+              />
+            </div>
+          </div>
+          <div className="space-y-3">
+            <Label className="font-medium">Product Image</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="cursor-pointer"
+            />
+
+            {preview && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden rounded-xl border shadow-sm"
+              >
+                <img
+                  src={preview}
+                  alt="preview"
+                  className="w-full h-44 object-cover hover:scale-105 transition duration-300"
                 />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Description</Label>
-                <Input
-                  name="description"
-                  placeholder="Enter description"
-                  value={form.description}
-                  onChange={handleProductCreate}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Price</Label>
-                <Input
-                  name="price"
-                  type="number"
-                  placeholder="Enter price"
-                  value={form.price}
-                  onChange={handleProductCreate}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Input
-                  name="category"
-                  placeholder="Enter category"
-                  value={form.category}
-                  onChange={handleProductCreate}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label>Product Image</Label>
-
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                />
-
-                {preview && (
-                  <motion.img
-                    src={preview}
-                    alt="preview"
-                    className="w-full h-40 object-cover rounded-lg border"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                  />
-                )}
-              </div>
-
-              <Button type="submit" disabled={createLoading} className="w-full">
-  {createLoading ? "Creating..." : "Create Product"}
-</Button>
-
-            </form>
-
-          </CardContent>
-        </Card>
-
-      </motion.div>
-    </div>
+              </motion.div>
+            )}
+          </div>
+          <Button
+            type="submit"
+            disabled={createLoading}
+            className="w-full h-11 rounded-lg font-semibold bg-black text-white hover:bg-gray-900 transition"
+          >
+            {createLoading ? "Creating Product..." : "Create Product"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  </motion.div>
+</div>
   )
 }

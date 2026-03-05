@@ -2,10 +2,11 @@ import { createAsyncThunk,createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "@/lib/axios";
 import { Product } from "@/types/product";
 
-interface ProductState{
-  products:Product[],
-  loading:boolean,
-  error:string | null
+interface ProductState {
+  products: Product[]
+  product: Product | null
+  loading: boolean
+  error: string | null
 
   createLoading: boolean
   createError: string | null
@@ -14,6 +15,7 @@ interface ProductState{
 
 const initialState: ProductState = {
   products: [],
+  product: null,
   loading: false,
   error: null,
 
@@ -39,8 +41,30 @@ export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string
   }
 );
 
-export const createProduct = createAsyncThunk<Product,FormData,{ rejectValue: string }
-  >(
+export const getSingleProduct = createAsyncThunk<
+  Product,
+  string,
+  { rejectValue: string }
+>(
+  "products/singleProduct",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(
+        `/products/single-product?productId=${productId}`
+      );
+
+      return res.data.product;
+
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+  }
+);
+
+
+export const createProduct = createAsyncThunk<Product,FormData,{ rejectValue: string }>(
   "products/createProduct",
   async (productData, { rejectWithValue }) => {
     try {
@@ -87,7 +111,21 @@ const productSlice=createSlice({
 
         .addCase(getProducts.rejected,(state,action)=>{
             state.loading = false;
-            state.error = action.payload || "Something went wrong";
+            state.error = action.payload || "Get product went wrong";
+        })
+
+       .addCase(getSingleProduct.pending,(state)=>{
+          state.loading = true
+        })
+
+        .addCase(getSingleProduct.fulfilled,(state,action)=>{
+          state.loading = false
+          state.product = action.payload
+        })
+
+        .addCase(getSingleProduct.rejected,(state,action)=>{
+          state.loading = false
+          state.error = action.payload || "Single Product went wrong"
         })
 
         .addCase(createProduct.pending, (state) => {
