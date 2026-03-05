@@ -55,38 +55,36 @@ const Navbar = () => {
             : "bg-black/60 py-4"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex items-center justify-between">
+    <div className="max-w-7xl mx-auto px-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            className="md:hidden text-white p-2"
+            onClick={() => setMobileOpen(true)}
+            >
+            <Menu size={26} />
+          </button>
 
-            {/* Left */}
-            <div className="flex items-center gap-3">
-              <button
-                className="md:hidden text-white p-2"
-                onClick={() => setMobileOpen(true)}
-              >
-                <Menu size={26} />
-              </button>
+          <Link href="/">
+            <h1 className="text-2xl font-extrabold tracking-wide bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
+                Store_App
+            </h1>
+            </Link>
+          </div>
 
-              <Link href="/">
-                <h1 className="text-2xl font-extrabold tracking-wide bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-                  Store_App
-                </h1>
-              </Link>
-            </div>
-
-            {/* Search */}
-            <div className="hidden md:flex items-center w-[420px] relative">
-              <Input
+           
+          <div className="hidden md:flex items-center w-[420px] relative">
+            <Input
                 placeholder="Search products..."
                 className="py-5 rounded-full pr-16 pl-6 bg-white/10 border border-white/20 text-white placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 transition"
               />
               <Search size={20} className="absolute right-5 text-gray-400" />
             </div>
 
-            {/* Right */}
+       
             <div className="flex items-center gap-5">
 
-              {/* ✅ Cart With Badge */}
+              
               <Link href="/cart" className="hidden md:block relative">
                 <motion.div
                   animate={{ scale: totalQuantity ? [1, 1.2, 1] : 1 }}
@@ -148,6 +146,13 @@ const Navbar = () => {
                               Admin Dashboard
                             </Link>
                           )}
+
+                           <Link
+                            href="/orders"
+                            className="block px-4 py-3 text-sm text-white hover:bg-white/10 transition"
+                          >
+                            Orders
+                          </Link>
 
                           <button
                             onClick={() =>
