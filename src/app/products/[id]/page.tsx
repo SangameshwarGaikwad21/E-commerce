@@ -41,96 +41,96 @@ export default function SingleProduct() {
 
   return (
 
-<section className="min-h-screen bg-gray-100 py-12">
+    <section className="min-h-screen bg-gray-100 py-12">
 
-<div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
+      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
 
-<div className="grid md:grid-cols-2 gap-10 items-start">
+      <div className="grid md:grid-cols-2 gap-10 items-start">
 
 
 {/* PRODUCT IMAGE */}
 
-<div className="flex justify-center">
+              <div className="flex justify-center">
 
-<img
-src={product?.images?.[0] || "/placeholder.png"}
-alt={product?.title}
-className="max-h-[400px] object-contain"
-/>
+              <img
+              src={product?.images?.[0] || "/placeholder.png"}
+              alt={product?.title}
+              className="max-h-[400px] object-contain"
+              />
 
-</div>
+              </div>
 
 
 {/* PRODUCT DETAILS */}
 
-<div className="space-y-6">
+            <div className="space-y-6">
 
-<h1 className="text-3xl font-semibold text-gray-900">
-{product?.title}
-</h1>
-
-
-<p className="text-2xl font-bold text-gray-900">
-₹{product?.price}
-</p>
+            <h1 className="text-3xl font-semibold text-gray-900">
+            {product?.title}
+            </h1>
 
 
-<p className="text-gray-600 leading-relaxed">
-{product?.description}
-</p>
+            <p className="text-2xl font-bold text-gray-900">
+            ₹{product?.price}
+            </p>
 
 
-{/* BUTTONS */}
-
-<div className="flex gap-4 pt-4">
-
-<button
-className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-md"
-onClick={() => {
-
-if (!product) return
-
-if (!session) {
-router.push("/login")
-return
-}
-
-dispatch(
-addToCart({
-id: product._id,
-title: product.title,
-price: Number(product.price),
-image: product.images?.[0] || "/placeholder.png",
-})
-)
-
-}}
->
-
-Add to Cart
-
-</button>
+            <p className="text-gray-600 leading-relaxed">
+            {product?.description}
+            </p>
 
 
-<button
-className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-md"
->
+            {/* BUTTONS */}
 
-Buy Now
+            <div className="flex gap-4 pt-4">
 
-</button>
+            <button
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-md"
+            onClick={() => {
+
+            if (!product) return
+
+            if (!session) {
+            router.push("/login")
+            return
+            }
+
+            dispatch(
+            addToCart({
+            id: product._id,
+            title: product.title,
+            price: Number(product.price),
+            image: product.images?.[0] || "/placeholder.png",
+            })
+            )
+
+            }}
+            >
+
+            Add to Cart
+
+            </button>
 
 
-</div>
+            <button
+            className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-md"
+            >
 
-</div>
+            Buy Now
+
+            </button>
 
 
-</div>
+            </div>
 
-</div>
+            </div>
 
-</section>
+
+        </div>
+
+      </div>
+
+  </section>
 
   )
 
