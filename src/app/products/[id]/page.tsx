@@ -7,7 +7,7 @@ import { getSingleProduct } from "@/redux/fetures/productSlice"
 import { addToCart } from "@/redux/fetures/cartSlice"
 import { useSession } from "next-auth/react"
 
-export default function SingleProduct() {
+const page =()=> {
 
   const router = useRouter()
   const params = useParams()
@@ -25,113 +25,112 @@ export default function SingleProduct() {
     }
   }, [dispatch, id])
 
+
+  // LOADING STATE
   if (loading)
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Loading product...</p>
+        <p className="text-gray-500 text-lg">Loading product...</p>
       </div>
     )
 
+
+  // ERROR STATE
   if (error)
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 text-lg">{error}</p>
       </div>
     )
+
 
   return (
 
     <section className="min-h-screen bg-gray-100 py-12">
 
-      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-md">
+      <div className="max-w-6xl mx-auto bg-white p-10 rounded-xl shadow-lg">
 
-      <div className="grid md:grid-cols-2 gap-10 items-start">
+        <div className="grid md:grid-cols-2 gap-12 items-start">
 
 
-{/* PRODUCT IMAGE */}
+          {/* PRODUCT IMAGE */}
+          <div className="flex justify-center items-center bg-gray-50 rounded-lg p-6">
 
-              <div className="flex justify-center">
-
-              <img
+            <img
               src={product?.images?.[0] || "/placeholder.png"}
               alt={product?.title}
-              className="max-h-[400px] object-contain"
-              />
+              className="w-full max-w-md object-contain"
+            />
 
-              </div>
+          </div>
 
 
-{/* PRODUCT DETAILS */}
-
-            <div className="space-y-6">
+          {/* PRODUCT DETAILS */}
+          <div className="space-y-6">
 
             <h1 className="text-3xl font-semibold text-gray-900">
-            {product?.title}
+              {product?.title}
             </h1>
 
 
             <p className="text-2xl font-bold text-gray-900">
-            ₹{product?.price}
+              ₹{Number(product?.price).toLocaleString()}
             </p>
 
 
             <p className="text-gray-600 leading-relaxed">
-            {product?.description}
+              {product?.description}
             </p>
 
 
             {/* BUTTONS */}
-
             <div className="flex gap-4 pt-4">
 
-            <button
-            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-md"
-            onClick={() => {
+              <button
+                className="bg-black hover:bg-gray-800 text-white px-8 py-3 rounded-md transition"
+                onClick={() => {
 
-            if (!product) return
+                  if (!product) return
 
-            if (!session) {
-            router.push("/login")
-            return
-            }
+                  if (!session) {
+                    router.push("/login")
+                    return
+                  }
 
-            dispatch(
-            addToCart({
-            id: product._id,
-            title: product.title,
-            price: Number(product.price),
-            image: product.images?.[0] || "/placeholder.png",
-            })
-            )
+                  dispatch(
+                    addToCart({
+                      id: product._id,
+                      title: product.title,
+                      price: Number(product.price),
+                      image: product.images?.[0] || "/placeholder.png",
+                    })
+                  )
 
-            }}
-            >
-
-            Add to Cart
-
-            </button>
+                }}
+              >
+                Add to Cart
+              </button>
 
 
-            <button
-            className="bg-yellow-400 hover:bg-yellow-500 text-black px-8 py-3 rounded-md"
-            >
-
-            Buy Now
-
-            </button>
+              <button
+                className="bg-yellow-500 hover:bg-yellow-600 text-black px-8 py-3 rounded-md transition"
+              >
+                Buy Now
+              </button>
 
 
             </div>
 
-            </div>
-
+          </div>
 
         </div>
 
       </div>
 
-  </section>
+    </section>
 
   )
 
 }
+
+export default page

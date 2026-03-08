@@ -13,7 +13,6 @@ export default function NavbarWrapper() {
     pathname.startsWith("/admin/dashboard")  ||
     pathname.startsWith("/admin/product/create")
 
-
   if (hideNavbar) return null;
 
   return <Navbar />;
