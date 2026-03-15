@@ -16,6 +16,8 @@ const page = () => {
           Create Product
         </Link>
       </div>
+
+      
     </div>
   )
 }

@@ -62,12 +62,13 @@ const page = () => {
 
 
   return (
-   <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 overflow-hidden">
-      <motion.div
+    <div className="relative min-h-screen flex items-center justify-center
+      bg-gradient-to-br from-indigo-950 via-slate-900 to-black px-4 overflow-hidden">
+        <motion.div
         animate={{ scale: [1, 1.2, 1] }}
-        transition={{ repeat: Infinity, duration: 8 }}
-        className="absolute w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-3xl"
-      />
+        transition={{ repeat: Infinity, duration: 10 }}
+        className="absolute w-[600px] h-[600px] bg-blue-500/10 rounded-full blur-[120px] -top-40 -left-40"
+        />
 
       <motion.div
         initial={{ opacity: 0, y: 60, scale: 0.95 }}
@@ -75,7 +76,7 @@ const page = () => {
         transition={{ duration: 0.6 }}
         className="w-full max-w-md relative z-10"
       >
-        <Card className="rounded-3xl shadow-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+        <Card className="rounded-3xl shadow-2xl border border-white/10 bg-slate-900/70 backdrop-blur-xl">
           
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-center text-white">

@@ -41,12 +41,8 @@ export const getProducts = createAsyncThunk<Product[],void,{ rejectValue: string
   }
 );
 
-export const getSingleProduct = createAsyncThunk<
-  Product,
-  string,
-  { rejectValue: string }
->(
-  "products/singleProduct",
+export const getSingleProduct = createAsyncThunk<Product,string,{ rejectValue: string }>(
+    "products/singleProduct",
   async (productId, { rejectWithValue }) => {
     try {
       const res = await axiosInstance.get(
@@ -62,7 +58,6 @@ export const getSingleProduct = createAsyncThunk<
     }
   }
 );
-
 
 export const createProduct = createAsyncThunk<Product,FormData,{ rejectValue: string }>(
   "products/createProduct",
@@ -87,14 +82,29 @@ export const createProduct = createAsyncThunk<Product,FormData,{ rejectValue: st
   }
 );
 
+export const deleteProduct=createAsyncThunk<string,string,{rejectValue:string}>(
+  "products/deleteProduct",
+  async(productId,{ rejectWithValue })=>{
+    try {
+      await axiosInstance.delete(`/products/delete-product?productId=${productId}`)
+      return productId;
+    } 
+    catch (error:any) {
+       return rejectWithValue(
+        error.response?.data?.message || "Failed to delete product"
+      );
+    }
+  }
+)
+
 const productSlice=createSlice({
     name:"products",
     initialState,
     reducers: {
     resetCreateState: (state) => {
-    state.createLoading = false;
-    state.createError = null;
-    state.createSuccess = false;
+        state.createLoading = false;
+        state.createError = null;
+        state.createSuccess = false;
       },
     },
     extraReducers:(builder)=>{
@@ -129,22 +139,39 @@ const productSlice=createSlice({
         })
 
         .addCase(createProduct.pending, (state) => {
-        state.createLoading = true;
-        state.createError = null;
-        state.createSuccess = false;
+              state.createLoading = true;
+              state.createError = null;
+              state.createSuccess = false;
         })
 
         .addCase(createProduct.fulfilled, (state, action) => {
-          state.createLoading = false;
-          state.createSuccess = true;
-          state.products.unshift(action.payload);
+              state.createLoading = false;
+              state.createSuccess = true;
+              state.products.unshift(action.payload);
         })
 
         .addCase(createProduct.rejected, (state, action) => {
-          state.createLoading = false;
-          state.createError =
-            action.payload || "Failed to create product";
-        });
+              state.createLoading = false;
+              state.createError =
+              action.payload || "Failed to create product";
+        })
+
+        .addCase(deleteProduct.pending,(state)=>{
+            state.loading=true
+        })
+
+        .addCase(deleteProduct.fulfilled, (state, action) => {
+            state.loading = false;
+
+            state.products = state.products.filter(
+                (product) => product._id !== action.payload
+            );
+        })
+
+        .addCase(deleteProduct.rejected,(state,action)=>{
+          state.loading=false;
+          state.error=action.payload || "delete product failed"
+        })
     }
 })
 

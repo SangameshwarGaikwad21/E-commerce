@@ -45,16 +45,12 @@ const Navbar = () => {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4 }}
-        className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${
-          scrolled
-            ? "bg-black/80 border-b border-white/10 py-2"
-            : "bg-black/60 py-4"
-        }`}
-      >
+   <motion.header
+  initial={{ y: -50, opacity: 0 }}
+  animate={{ y: 0, opacity: 1 }}
+  transition={{ duration: 0.4 }}
+  className="sticky top-0 z-50 bg-gray-900 border-b border-gray-800 py-3"
+>
     <div className="max-w-7xl mx-auto px-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

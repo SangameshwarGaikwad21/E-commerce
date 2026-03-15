@@ -47,13 +47,13 @@ export default function LoginPage() {
   if (status === "loading") return null;
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 px-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-950 via-slate-900 to-black px-4 overflow-hidden">
       
       {/* Animated Background */}
       <motion.div
         animate={{ scale: [1, 1.2, 1] }}
         transition={{ repeat: Infinity, duration: 8 }}
-        className="absolute w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-3xl"
+        className="absolute w-[500px] h-[500px] bg-indigo-500/25 rounded-full blur-3xl"
       />
 
       <motion.div
