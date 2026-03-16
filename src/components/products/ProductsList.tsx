@@ -49,7 +49,7 @@ const ProductList = () => {
 
     {/* HEADER */}
     <div className="mb-20 text-center">
-      <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
+      <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 tracking-tight">
         Featured Collection
       </h2>
 
@@ -57,25 +57,22 @@ const ProductList = () => {
         Premium products crafted for performance.
       </p>
     </div>
-
-
-   
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
 
       {products.map((item: any) => (
 
         <motion.div
-  key={item._id}
-  initial={{ opacity: 0, y: 40 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.4 }}
-  viewport={{ once: true }}
-  className="group cursor-pointer"
-  onClick={() => handleProductClick(item._id)}
->
-  <div className="relative rounded-3xl bg-white/80 backdrop-blur border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
+          key={item._id}
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          viewport={{ once: true }}
+          className="group cursor-pointer"
+          onClick={() => handleProductClick(item._id)}
+        >
+      <div className="relative rounded-3xl bg-white/80 backdrop-blur border border-slate-200 overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
 
-    {/* IMAGE AREA */}
+   
     <div className="relative h-72 flex items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 overflow-hidden">
 
       <img
@@ -84,24 +81,19 @@ const ProductList = () => {
         className="h-56 object-contain transition-transform duration-500 group-hover:scale-110"
       />
 
-      {/* DISCOUNT BADGE */}
+     
       {item.discount > 0 && (
         <span className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-xs px-3 py-1 rounded-full font-medium shadow">
           {item.discount}% OFF
         </span>
       )}
 
-      {/* HOVER ACTION */}
+     
       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-
-        <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-semibold shadow hover:scale-105 transition">
-          View Product
-        </button>
-
       </div>
     </div>
 
-    {/* CONTENT */}
+   
     <div className="p-6 space-y-4">
 
       <h3 className="text-lg font-semibold text-slate-900 line-clamp-1">

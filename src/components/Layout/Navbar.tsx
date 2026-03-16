@@ -46,11 +46,11 @@ const Navbar = () => {
   return (
     <>
    <motion.header
-  initial={{ y: -50, opacity: 0 }}
-  animate={{ y: 0, opacity: 1 }}
-  transition={{ duration: 0.4 }}
-  className="sticky top-0 z-50 bg-gray-900 border-b border-gray-800 py-3"
->
+      initial={{ y: -50, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.4 }}
+      className="sticky top-0 z-50 bg-gray-900 border-b border-gray-800 py-3"
+    >
     <div className="max-w-7xl mx-auto px-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -143,12 +143,7 @@ const Navbar = () => {
                             </Link>
                           )}
 
-                           <Link
-                            href="/orders"
-                            className="block px-4 py-3 text-sm text-white hover:bg-white/10 transition"
-                          >
-                            Orders
-                          </Link>
+                           
 
                           <button
                             onClick={() =>
