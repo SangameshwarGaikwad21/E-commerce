@@ -157,12 +157,7 @@ export default function Page() {
                     onChange={handleProductCreate}
                   />
                 </div>
-
               </div>
-
-
-              {/* Image Upload */}
-
               <div className="space-y-3">
 
                 <Label>Product Image</Label>

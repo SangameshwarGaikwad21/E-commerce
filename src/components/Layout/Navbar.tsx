@@ -175,7 +175,6 @@ const Navbar = () => {
                   )}
                 </AnimatePresence>
               </div>
-
             </div>
           </div>
         </div>
