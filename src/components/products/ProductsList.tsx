@@ -5,12 +5,10 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getProducts } from "@/redux/fetures/productSlice";
 import { motion } from "framer-motion";
-import { useSession } from "next-auth/react";
 
 const ProductList = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { data: session } = useSession();
 
   const { products, loading, error } =
     useAppSelector((state) => state.product);
@@ -23,60 +21,59 @@ const ProductList = () => {
     router.push(`/products/${id}`);
   };
 
+  // 🔹 Loading Skeleton UI
   if (loading)
     return (
-      <p className="text-center text-lg text-white py-20">
-        Loading products...
-      </p>
+      <div className="min-h-screen flex items-center justify-center bg-slate-950">
+        <p className="text-slate-400 text-lg animate-pulse">
+          Loading premium products...
+        </p>
+      </div>
     );
 
   if (error)
     return (
-      <p className="text-center text-red-500 py-20">
-        {error}
-      </p>
+      <p className="text-center text-red-500 py-20">{error}</p>
     );
 
   return (
-    <section className="relative py-28 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 overflow-hidden">
+    <section className="relative py-24 bg-slate-950 overflow-hidden">
 
-      {/* Glow Background */}
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-purple-500/20 blur-[120px] rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-pink-500/20 blur-[120px] rounded-full"></div>
+      {/* 🔥 Gradient Glow Background */}
+      <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-purple-600/20 blur-[140px] rounded-full"></div>
+      <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-pink-600/20 blur-[140px] rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
-      
-        <div className="mb-20 text-center">
-          <h2 className="text-4xl md:text-5xl font-semibold text-gray-900 tracking-tight">
+        {/* 🔹 Heading */}
+        <div className="text-center mb-20">
+          <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tight">
             Featured Collection
           </h2>
-
           <p className="text-slate-400 mt-4 text-lg">
-            Premium products crafted for performance.
+            Explore premium curated products ✨
           </p>
         </div>
 
-      
+        {/* 🔹 Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
 
           {products.map((item: any) => (
-
             <motion.div
               key={item._id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="group cursor-pointer"
               onClick={() => handleProductClick(item._id)}
+              className="group cursor-pointer"
             >
 
-              {/* CARD */}
-              <div className="relative rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+              {/* 🔥 Glass Card */}
+              <div className="relative rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden shadow-lg hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-3">
 
                 {/* IMAGE */}
-                <div className="relative h-72 flex items-center justify-center bg-slate-50">
+                <div className="relative h-72 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
 
                   <img
                     src={item?.images?.[0] || "/no-product.png"}
@@ -86,54 +83,55 @@ const ProductList = () => {
 
                   {/* DISCOUNT BADGE */}
                   {item.discount > 0 && (
-                    <span className="absolute top-4 left-4 bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                    <span className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
                       {item.discount}% OFF
                     </span>
                   )}
-
                 </div>
 
                 {/* CONTENT */}
                 <div className="p-6 space-y-3">
 
                   {/* TITLE */}
-                  <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
+                  <h3 className="text-lg font-semibold text-white line-clamp-1 group-hover:text-purple-400 transition">
                     {item.title}
                   </h3>
 
                   {/* DESCRIPTION */}
-                  <p className="text-sm text-gray-500 line-clamp-2">
+                  <p className="text-sm text-slate-400 line-clamp-2">
                     {item.description}
                   </p>
 
                   {/* RATING */}
-                  <div className="flex text-yellow-400 text-sm">
+                  <div className="flex text-yellow-400 text-sm tracking-wide">
                     ★★★★☆
                   </div>
 
                   {/* PRICE */}
                   <div className="flex items-center gap-3 pt-2">
 
-                    <span className="text-xl font-bold text-gray-900">
+                    <span className="text-xl font-bold text-white">
                       ₹{item.price}
                     </span>
 
                     {item.discount > 0 && (
-                      <span className="text-sm text-gray-400 line-through">
-                        ₹{Math.round(item.price / (1 - item.discount / 100))}
+                      <span className="text-sm text-slate-500 line-through">
+                        ₹{Math.round(
+                          item.price / (1 - item.discount / 100)
+                        )}
                       </span>
                     )}
-
                   </div>
 
                 </div>
 
+                {/* 🔥 Hover Gradient Border Effect */}
+                <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-purple-500/40 transition"></div>
+
               </div>
 
             </motion.div>
-
           ))}
-
         </div>
       </div>
     </section>

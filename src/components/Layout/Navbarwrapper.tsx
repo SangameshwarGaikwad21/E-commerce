@@ -1,5 +1,4 @@
 "use client";
-
 import Navbar from "./Navbar";
 import { usePathname } from "next/navigation";
 

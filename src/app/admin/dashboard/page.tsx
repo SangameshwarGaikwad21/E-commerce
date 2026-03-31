@@ -1,8 +1,19 @@
-import React from 'react'
+import Link from "next/link"
+
 
 const page = () => {
-  return (
-    <div>page</div>
+
+  
+
+  return (    
+    <div>
+      <Link href="/">
+          Admin Dashboard
+      </Link>
+        <Link href="/admin/product/create">
+          Product       
+        </Link>
+    </div>
   )
 }
 
