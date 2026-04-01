@@ -81,13 +81,16 @@ export default function Page() {
         </p>
       </div>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
 
         {/* Title */}
         <div>
           <Label className="text-gray-700 text-sm">Product Title</Label>
           <Input
-            className="mt-1 h-12 bg-white border-gray-300 focus:ring-2 focus:ring-blue-500"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            className="mt-1 h-12 bg-white border-gray-300"
           />
         </div>
 
@@ -95,21 +98,37 @@ export default function Page() {
         <div>
           <Label className="text-gray-700 text-sm">Description</Label>
           <Input
-            className="mt-1 h-12 bg-white border-gray-300 focus:ring-2 focus:ring-blue-500"
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            className="mt-1 h-12 bg-white border-gray-300"
           />
         </div>
 
         {/* Grid */}
         <div className="grid grid-cols-2 gap-4">
+
           <div>
             <Label className="text-gray-700 text-sm">Price</Label>
-            <Input className="mt-1 h-12 bg-white border-gray-300" />
+            <Input
+              name="price"
+              type="number"
+              value={form.price}
+              onChange={handleChange}
+              className="mt-1 h-12 bg-white border-gray-300"
+            />
           </div>
 
           <div>
             <Label className="text-gray-700 text-sm">Category</Label>
-            <Input className="mt-1 h-12 bg-white border-gray-300" />
+            <Input
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              className="mt-1 h-12 bg-white border-gray-300"
+            />
           </div>
+
         </div>
 
         {/* Image */}
@@ -117,25 +136,30 @@ export default function Page() {
           <Label className="text-gray-700 text-sm">Product Image</Label>
           <Input
             type="file"
+            onChange={handleFile}
             className="mt-1 h-12 bg-white border-gray-300 cursor-pointer"
           />
         </div>
 
+        {/* Preview */}
+        {preview && (
+          <img src={preview} className="h-32 object-contain rounded-lg" />
+        )}
+
         {/* Button */}
         <motion.button
+          type="submit"
           whileTap={{ scale: 0.97 }}
           whileHover={{ scale: 1.02 }}
-          className="w-full h-12 mt-4 rounded-xl bg-blue-600 
-          text-white font-medium text-lg shadow-md hover:bg-blue-700 transition-all"
+          disabled={createLoading}
+          className="w-full h-12 mt-4 rounded-xl bg-blue-600 text-white font-medium text-lg shadow-md hover:bg-blue-700 transition-all"
         >
-          Create Product
+          {createLoading ? "Creating..." : "Create Product"}
         </motion.button>
+    </form>
+  </div>
 
-      </form>
-
-    </div>
-
-  </motion.div>
+</motion.div>
 </div>
   );
 }

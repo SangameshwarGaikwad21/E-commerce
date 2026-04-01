@@ -72,7 +72,7 @@ const Page = () => {
 
       {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        {products.map((item: any) => (
+        {products?.map((item: any) => (
           <motion.div
             key={item._id}
             initial={{ opacity: 0, y: 60 }}
