@@ -97,6 +97,10 @@ export const deleteProduct=createAsyncThunk<string,string,{rejectValue:string}>(
   }
 )
 
+export const updateProduct=createAsyncThunk(
+
+)
+
 const productSlice=createSlice({
     name:"products",
     initialState,

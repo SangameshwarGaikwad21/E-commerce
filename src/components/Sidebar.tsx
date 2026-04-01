@@ -9,7 +9,6 @@ const Sidebar = () => {
   const menu = [
     {name:"Dashboard",path:"/admin/dashboard"},
     { name: "Products", path: "/admin/product/productlist" },
-    { name: "Create Product", path: "/admin/product/create" },
     { name: "Categories", path: "/admin/category" },
     { name: "Orders", path: "/admin/orders" },
     { name: "Users", path: "/admin/users" },
