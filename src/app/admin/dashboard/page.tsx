@@ -1,18 +1,10 @@
-import Link from "next/link"
-
+import React from 'react'
 
 const page = () => {
 
-  
-
-  return (    
+  return (
     <div>
-      <Link href="/">
-          Admin Dashboard
-      </Link>
-        <Link href="/admin/product/create">
-          Product       
-        </Link>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Laborum praesentium mollitia velit, temporibus dicta nisi numquam fugit quisquam culpa quo? Rem expedita quo, voluptatum adipisci praesentium ipsa doloremque ipsam repellat ratione a perspiciatis animi porro beatae, unde quia minus aspernatur accusamus quisquam tenetur? Ut molestias saepe cupiditate amet ad? Ipsam culpa deserunt earum, odit vero quam obcaecati quos optio voluptatum error, illo veniam distinctio perspiciatis beatae natus eligendi porro! Temporibus assumenda, iure obcaecati officia recusandae repudiandae atque sed dolor mollitia corrupti, accusamus soluta voluptates magnam est numquam. Esse eaque quod cum? Laudantium eos asperiores aliquam, expedita quas reiciendis. Odio mollitia explicabo ipsum provident voluptates repellat officiis at veniam aliquid, culpa eveniet velit asperiores omnis error neque voluptatem corrupti iste, optio odit reprehenderit ipsam quod. Consequuntur praesentium quaerat reprehenderit at sed esse expedita vitae soluta! Ea aut amet aspernatur perspiciatis voluptatum commodi eaque quasi unde dolorum libero? Quam placeat voluptatem illum obcaecati sed molestias neque sequi numquam voluptas dolor dolore repellendus quaerat, architecto, ipsam quo. Labore beatae aliquam temporibus, ipsum quidem, totam repudiandae exercitationem laborum numquam voluptates illum corrupti, recusandae voluptate dignissimos porro alias? Distinctio voluptatibus sed praesentium repellendus eum at voluptas sunt nulla atque magni ad optio explicabo aliquam pariatur natus vitae quidem, corporis reprehenderit quod? Aliquid ducimus officiis reprehenderit molestias accusamus fugiat aspernatur voluptas possimus, numquam minima eius? Quidem itaque ea dolorem porro possimus natus dolorum dignissimos ducimus doloribus quo debitis velit obcaecati provident, quaerat cumque odio blanditiis iure qui ipsa recusandae a modi rerum veritatis. Nesciunt consectetur recusandae incidunt labore. Perferendis quod eum deserunt. Minus eveniet similique minima quaerat incidunt fuga at, inventore soluta maxime aperiam voluptatem optio perspiciatis possimus earum dolorem illum corrupti sunt expedita alias. Illum nesciunt quod voluptatum. Dolores, nihil eius reiciendis quos ducimus modi cum quis ratione rerum eos, minus explicabo! Rem, et pariatur!
     </div>
   )
 }

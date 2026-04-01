@@ -154,7 +154,6 @@ const page = () => {
                 > Login
               </Link>
               </div>
-              
             </form>
           </CardContent>
         </Card>

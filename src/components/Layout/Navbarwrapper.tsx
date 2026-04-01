@@ -10,7 +10,8 @@ export default function NavbarWrapper() {
     pathname.startsWith("/login") || 
     pathname.startsWith("/forgotpassword") ||
     pathname.startsWith("/admin/dashboard")  ||
-    pathname.startsWith("/admin/product/create")
+    pathname.startsWith("/admin/product/create") ||
+    pathname.startsWith("/admin/product/productlist")
 
   if (hideNavbar) return null;
 

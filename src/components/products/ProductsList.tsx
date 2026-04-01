@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -88,8 +87,6 @@ const ProductList = () => {
                     </span>
                   )}
                 </div>
-
-                {/* CONTENT */}
                 <div className="p-6 space-y-3">
 
                   {/* TITLE */}
