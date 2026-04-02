@@ -67,7 +67,7 @@ export default function ProfilePage() {
         {/* Actions */}
         <div className="space-y-3">
           <button
-            onClick={() => router.push("/change-password")}
+            onClick={() => router.push("/forgotpassword")}
             className="w-full h-11 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 transition"
           >
             Change Password
