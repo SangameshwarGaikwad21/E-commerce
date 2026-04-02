@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { createProduct } from "@/redux/fetures/productSlice";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
 export default function Page() {
@@ -59,107 +58,121 @@ export default function Page() {
   };
 
   return (
-  <div className="min-h-screen flex justify-center items-start px-4 py-10 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black flex justify-center items-start px-4 py-10">
 
-  <motion.div
-    initial={{ opacity: 0, y: 40 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4 }}
-    className="w-full max-w-2xl"   
-  >
+      {/* Glow */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30 pointer-events-none" />
 
-    {/* Card */}
-    <div className="bg-gray-100 border border-gray-300 rounded-3xl shadow-2xl p-10">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-2xl relative z-10"
+      >
 
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-semibold text-gray-800">
-          Create Product
-        </h2>
-        <p className="text-gray-500 text-sm mt-1">
-          Add new product to your store 🚀
-        </p>
-      </div>
+        {/* CARD */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-10">
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-
-        {/* Title */}
-        <div>
-          <Label className="text-gray-700 text-sm">Product Title</Label>
-          <Input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            className="mt-1 h-12 bg-white border-gray-300"
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <Label className="text-gray-700 text-sm">Description</Label>
-          <Input
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="mt-1 h-12 bg-white border-gray-300"
-          />
-        </div>
-
-        {/* Grid */}
-        <div className="grid grid-cols-2 gap-4">
-
-          <div>
-            <Label className="text-gray-700 text-sm">Price</Label>
-            <Input
-              name="price"
-              type="number"
-              value={form.price}
-              onChange={handleChange}
-              className="mt-1 h-12 bg-white border-gray-300"
-            />
+          {/* HEADER */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-semibold text-white">
+              Create Product
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              Add new product to your store 🚀
+            </p>
           </div>
 
-          <div>
-            <Label className="text-gray-700 text-sm">Category</Label>
-            <Input
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="mt-1 h-12 bg-white border-gray-300"
-            />
-          </div>
+          <form className="space-y-6" onSubmit={handleSubmit}>
 
+            {/* TITLE */}
+            <div>
+              <Label className="text-gray-300 text-sm">
+                Product Title
+              </Label>
+              <Input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                className="mt-1 h-12 bg-gray-900 border border-white/10 text-white placeholder:text-gray-500"
+              />
+            </div>
+
+            {/* DESCRIPTION */}
+            <div>
+              <Label className="text-gray-300 text-sm">
+                Description
+              </Label>
+              <Input
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                className="mt-1 h-12 bg-gray-900 border border-white/10 text-white"
+              />
+            </div>
+
+            {/* GRID */}
+            <div className="grid grid-cols-2 gap-4">
+
+              <div>
+                <Label className="text-gray-300 text-sm">Price</Label>
+                <Input
+                  name="price"
+                  type="number"
+                  value={form.price}
+                  onChange={handleChange}
+                  className="mt-1 h-12 bg-gray-900 border border-white/10 text-white"
+                />
+              </div>
+
+              <div>
+                <Label className="text-gray-300 text-sm">Category</Label>
+                <Input
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className="mt-1 h-12 bg-gray-900 border border-white/10 text-white"
+                />
+              </div>
+
+            </div>
+
+            {/* IMAGE */}
+            <div>
+              <Label className="text-gray-300 text-sm">
+                Product Image
+              </Label>
+              <Input
+                type="file"
+                onChange={handleFile}
+                className="mt-1 h-12 bg-gray-900 border border-white/10 text-gray-400 cursor-pointer"
+              />
+            </div>
+
+            {/* PREVIEW */}
+            {preview && (
+              <div className="bg-gray-900 p-4 rounded-xl flex justify-center">
+                <img
+                  src={preview}
+                  className="h-32 object-contain rounded-lg"
+                />
+              </div>
+            )}
+
+            {/* BUTTON */}
+            <motion.button
+              type="submit"
+              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.02 }}
+              disabled={createLoading}
+              className="w-full h-12 mt-4 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium text-lg shadow-lg hover:opacity-90 transition-all"
+            >
+              {createLoading ? "Creating..." : "Create Product"}
+            </motion.button>
+
+          </form>
         </div>
-
-        {/* Image */}
-        <div>
-          <Label className="text-gray-700 text-sm">Product Image</Label>
-          <Input
-            type="file"
-            onChange={handleFile}
-            className="mt-1 h-12 bg-white border-gray-300 cursor-pointer"
-          />
-        </div>
-
-        {/* Preview */}
-        {preview && (
-          <img src={preview} className="h-32 object-contain rounded-lg" />
-        )}
-
-        {/* Button */}
-        <motion.button
-          type="submit"
-          whileTap={{ scale: 0.97 }}
-          whileHover={{ scale: 1.02 }}
-          disabled={createLoading}
-          className="w-full h-12 mt-4 rounded-xl bg-blue-600 text-white font-medium text-lg shadow-md hover:bg-blue-700 transition-all"
-        >
-          {createLoading ? "Creating..." : "Create Product"}
-        </motion.button>
-    </form>
-  </div>
-
-</motion.div>
-</div>
+      </motion.div>
+    </div>
   );
 }
