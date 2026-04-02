@@ -42,6 +42,23 @@ export const getProducts = createAsyncThunk<
   }
 });
 
+export const getSingleProduct = createAsyncThunk<Product,string,{ rejectValue: string }>(
+    "products/singleProduct",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const res = await axiosInstance.get(
+        `/products/single-product?productId=${productId}`
+      );
+
+      return res.data.product;
+
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || "Something went wrong"
+      );
+    }
+});
+
 // 🔥 CREATE PRODUCT
 export const createProduct = createAsyncThunk<
   Product,
@@ -98,8 +115,6 @@ const productSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
-      // ✅ GET PRODUCTS
       .addCase(getProducts.pending, (state) => {
         state.loading = true;
       })
@@ -107,7 +122,6 @@ const productSlice = createSlice({
       .addCase(getProducts.fulfilled, (state, action) => {
         state.loading = false;
 
-        // 🔥 IMPORTANT FIX
         state.products = Array.isArray(action.payload)
           ? action.payload
           : [];
@@ -118,7 +132,20 @@ const productSlice = createSlice({
         state.error = action.payload || "Get product went wrong";
       })
 
-      // ✅ CREATE PRODUCT
+      .addCase(getSingleProduct.pending,(state)=>{
+          state.loading = true
+        })
+
+        .addCase(getSingleProduct.fulfilled,(state,action)=>{
+          state.loading = false
+          state.product = action.payload
+        })
+
+        .addCase(getSingleProduct.rejected,(state,action)=>{
+          state.loading = false
+          state.error = action.payload || "Single Product went wrong"
+        }) 
+
       .addCase(createProduct.pending, (state) => {
         state.createLoading = true;
         state.createError = null;
@@ -129,7 +156,6 @@ const productSlice = createSlice({
         state.createLoading = false;
         state.createSuccess = true;
 
-        // 🔥 SAFE ADD
         if (action.payload) {
           state.products.unshift(action.payload);
         }
@@ -141,7 +167,6 @@ const productSlice = createSlice({
           action.payload || "Failed to create product";
       })
 
-      // ✅ DELETE PRODUCT
       .addCase(deleteProduct.pending, (state) => {
         state.loading = true;
       })
