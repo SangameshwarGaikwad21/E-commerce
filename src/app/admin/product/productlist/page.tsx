@@ -82,8 +82,6 @@ const Page = () => {
             className="group"
           >
             <div className="relative rounded-3xl bg-gradient-to-b from-gray-900 via-gray-950 to-black border border-white/10 overflow-hidden shadow-lg hover:-translate-y-2 transition">
-
-              {/* IMAGE */}
               <div className="relative h-72 flex items-center justify-center bg-gray-900">
                 <img
                   src={item?.images?.[0] || "/no-product.png"}
@@ -91,14 +89,11 @@ const Page = () => {
                   className="h-56 object-contain transition group-hover:scale-110"
                 />
 
-                {/* DISCOUNT */}
                 {item.discount > 0 && (
                   <span className="absolute top-4 left-4 bg-blue-600 text-white text-xs px-3 py-1 rounded-full">
                     {item.discount}% OFF
                   </span>
                 )}
-
-                {/* ACTION BUTTONS */}
                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
 
                   <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full">
@@ -115,17 +110,13 @@ const Page = () => {
 
                 </div>
               </div>
-
-              {/* CONTENT */}
               <div className="p-6 space-y-2">
                 <h3 className="text-lg font-semibold text-blue-400">
                   {item.title}
                 </h3>
-
                 <p className="text-sm text-gray-400 line-clamp-2">
                   {item.description}
                 </p>
-
                 <div className="flex items-center gap-3 pt-2">
                   <span className="text-xl font-bold text-white">
                     ₹{item.price}

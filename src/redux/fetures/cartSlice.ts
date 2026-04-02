@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import toast from "react-hot-toast";
 
 export interface CartItem {
   id: string;
@@ -35,19 +36,20 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
-      const existedItem = state.items.find(
+      const existingItem = state.items.find(
         (item) => item.id === action.payload.id
       );
 
-      if (existedItem) {
-        existedItem.quantity += 1;
-      } else {
+      if (existingItem) {
+          existingItem.quantity += 1;
+          toast.success("Quantity updated");
+        } else {
         state.items.push({
           ...action.payload,
           quantity: 1,
         });
-      }
-
+      toast.success("Added to cart");
+      } 
       saveCartToStorage(state.items);
     },
 

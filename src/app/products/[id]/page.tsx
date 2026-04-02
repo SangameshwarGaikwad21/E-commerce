@@ -15,9 +15,18 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
+  // ✅ GET PRODUCT STATE
   const { product, loading, error } = useAppSelector(
     (state) => state.product
   );
+
+  // ✅ GET CART ITEMS (IMPORTANT FIX)
+  const cartItems = useAppSelector((state) => state.cart.items);
+
+  // ✅ SAFE CHECK (important)
+  const isInCart = product
+    ? cartItems.some((item) => item.id === product._id)
+    : false;
 
   useEffect(() => {
     if (id) {
@@ -42,7 +51,7 @@ const Page = () => {
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black px-6 py-16 flex items-center justify-center">
 
-      {/* Glow Effect */}
+      {/* Glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30 pointer-events-none" />
 
       <div className="max-w-6xl w-full relative z-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
@@ -52,8 +61,8 @@ const Page = () => {
           {/* IMAGE */}
           <div className="md:w-1/2 flex items-center justify-center p-10 bg-gradient-to-br from-gray-800 to-gray-900">
             <img
-              src={product?.images?.[0] || "/placeholder.png"}
-              alt={product?.title}
+              src={product.images?.[0] || "/placeholder.png"}
+              alt={product.title}
               className="h-72 object-contain transition duration-500 hover:scale-110"
             />
           </div>
@@ -61,67 +70,51 @@ const Page = () => {
           {/* CONTENT */}
           <div className="md:w-1/2 p-10 space-y-6">
 
-            {/* Badge */}
             <span className="text-xs font-semibold bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full">
               Premium Product
             </span>
 
-            {/* Title */}
-            <h1 className="text-4xl font-bold text-white leading-tight">
-              {product?.title}
+            <h1 className="text-4xl font-bold text-white">
+              {product.title}
             </h1>
 
-            {/* Rating */}
-            <div className="flex items-center gap-2">
-              <div className="flex text-yellow-400 text-lg">★★★★★</div>
-              <span className="text-gray-400 text-sm">(120 Reviews)</span>
-            </div>
-
-            {/* Description */}
-            <p className="text-gray-400 leading-relaxed">
-              {product?.description}
+            <p className="text-gray-400">
+              {product.description}
             </p>
 
-            {/* Price */}
             <div className="flex items-center gap-4">
               <span className="text-3xl font-extrabold text-white">
-                ₹{Number(product?.price).toLocaleString()}
-              </span>
-
-              <span className="line-through text-gray-500">
-                ₹{Number(product?.price + 5000).toLocaleString()}
-              </span>
-
-              <span className="text-green-400 text-sm font-semibold">
-                10% OFF
+                ₹{Number(product.price).toLocaleString()}
               </span>
             </div>
 
-            {/* Stock */}
-            <p className="text-green-400 font-medium text-sm">
-              ✔ In Stock
-            </p>
-
-            {/* BUTTONS */}
+            <p className="text-green-400 text-sm">✔ In Stock</p>
             <div className="flex gap-4 pt-4">
 
-              {/* Add to Cart */}
               <button
                 onClick={() => {
                   if (!session) return router.push("/login");
 
-                  dispatch(
-                    addToCart({
-                      id: product._id,
-                      title: product.title,
-                      price: Number(product.price),
-                      image: product.images?.[0],
-                    })
-                  );
+                  if (!isInCart) {
+                    dispatch(
+                      addToCart({
+                        id: product._id,
+                        title: product.title,
+                        price: Number(product.price),
+                        image: product.images?.[0],
+                      })
+                    );
+                  }
                 }}
-                className="flex-1 bg-black border border-white/10 text-white font-semibold py-4 rounded-xl hover:bg-gray-900 transition transform hover:scale-[1.03] shadow-lg"
+                disabled={isInCart}
+                className={`flex-1 font-semibold py-4 rounded-xl transition transform shadow-lg
+                  ${
+                    isInCart
+                      ? "bg-green-600 cursor-not-allowed"
+                      : "bg-black border border-white/10 text-white hover:bg-gray-900 hover:scale-[1.03]"
+                  }`}
               >
-                Add to Cart
+                {isInCart ? "Added to Cart ✅" : "Add to Cart"}
               </button>
 
               {/* Buy Now */}
