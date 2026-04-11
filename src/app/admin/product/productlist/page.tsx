@@ -1,5 +1,4 @@
 "use client";
-
 import { getProducts, deleteProduct } from "@/redux/fetures/productSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useEffect, useState } from "react";
@@ -20,7 +19,6 @@ const Page = () => {
     dispatch(getProducts());
   }, [dispatch]);
 
-  // ✅ DELETE HANDLER (FIXED)
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
@@ -95,10 +93,11 @@ const Page = () => {
                   </span>
                 )}
                 <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition">
-
+              <Link href={`/admin/product/update/${item._id}`}>
                   <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full">
                     ✏️
                   </button>
+              </Link>
 
                   <button
                     onClick={() => handleDelete(item._id)}

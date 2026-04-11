@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -56,7 +55,7 @@ function HeroSection() {
           className="flex justify-center"
         >
           <img
-            src="/hero.png"
+            src="/Watch.jpg"
             alt="Product"
             className="w-[350px] md:w-[500px] object-contain drop-shadow-2xl"
           />
