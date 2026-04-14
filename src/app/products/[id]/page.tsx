@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getSingleProduct } from "@/redux/fetures/productSlice";
 import { addToCart } from "@/redux/fetures/cartSlice";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
@@ -117,9 +118,10 @@ const Page = () => {
                 {isInCart ? "Added to Cart ✅" : "Add to Cart"}
               </button>
 
-              {/* Buy Now */}
               <button className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition transform hover:scale-[1.03] shadow-lg">
-                Buy Now
+                <Link href="#">
+                       Buy Now
+                </Link>
               </button>
 
             </div>
