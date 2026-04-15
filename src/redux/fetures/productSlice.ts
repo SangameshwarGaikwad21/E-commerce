@@ -116,7 +116,7 @@ export const editProduct = createAsyncThunk<
         }
       );
 
-      return res.data.updatedProduct; // ✅ match backend
+      return res.data.updatedProduct;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to update product"
