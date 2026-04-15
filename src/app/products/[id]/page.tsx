@@ -118,14 +118,31 @@ const Page = () => {
                 {isInCart ? "Added to Cart ✅" : "Add to Cart"}
               </button>
 
-              <button className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition transform hover:scale-[1.03] shadow-lg">
-                <Link href="#">
-                       Buy Now
-                </Link>
+              <button className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition transform hover:scale-[1.03] shadow-lg"
+              onClick={() => {
+                  if (!session) {
+                    return router.push("/login");
+                  }
+                  const buyNowProduct = {
+                    id: product._id,
+                    title: product.title,
+                    price: Number(product.price),
+                    image: product.images?.[0],
+                  };
+
+                 localStorage.setItem("buyNowItem", JSON.stringify(buyNowProduct));
+                  const address = localStorage.getItem("address");
+
+                  if (!address) {
+                    router.push("/userAddress"); 
+                  } else {
+                    router.push("/checkout"); 
+                  }
+                }}
+              >
+              Buy Now
               </button>
-
             </div>
-
           </div>
         </div>
       </div>

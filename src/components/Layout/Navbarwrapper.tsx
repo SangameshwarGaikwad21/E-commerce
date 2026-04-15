@@ -11,7 +11,9 @@ export default function NavbarWrapper() {
     pathname.startsWith("/admin/dashboard")  ||
     pathname.startsWith("/admin/product/create") ||
     pathname.startsWith("/admin/product/productlist") ||
-    pathname.startsWith("/admin/product/update")
+    pathname.startsWith("/admin/product/update") ||
+    pathname.startsWith("/userAddress")
+    
 
   if (hideNavbar) return null;
 
