@@ -83,7 +83,6 @@ export default function Page() {
           Checkout
         </h1>
 
-        {/* PRODUCT */}
         <div className="border border-white/10 bg-white/5 p-4 rounded-xl mb-4">
           <h2 className="text-lg font-semibold text-purple-400 mb-2">
             Product
@@ -92,7 +91,6 @@ export default function Page() {
           <p className="text-white font-bold mt-1">₹{product.price}</p>
         </div>
 
-        {/* ADDRESS */}
         <div className="border border-white/10 bg-white/5 p-4 rounded-xl mb-6">
           <h2 className="text-lg font-semibold text-purple-400 mb-2">
             Delivery Address

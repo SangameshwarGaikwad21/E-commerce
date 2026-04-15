@@ -7,10 +7,16 @@ import {
   decreaseQuantity,
   removeFromCart,
 } from "@/redux/fetures/cartSlice";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Page() {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.cart.items);
+
+  const[loading,setloading]=useState(false)
+
+  const router=useRouter()
 
   const total = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
@@ -84,7 +90,7 @@ export default function Page() {
                     </div>
                   </div>
 
-                  {/* REMOVE */}
+                
                   <button
                     onClick={() =>
                       dispatch(removeFromCart(item.id))
@@ -93,21 +99,32 @@ export default function Page() {
                   >
                     Remove
                   </button>
+                  <button
+                    onClick={() =>
+                        router.push(`/order/place-order?type=single&id=${item.id}`)
+                    }
+                    className="text-purple-400 hover:text-purple-500 font-medium"
+                  >
+                    Buy this
+                  </button>
                 </div>
               ))}
             </div>
 
-            {/* TOTAL CARD */}
             <div className="mt-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-lg flex justify-between items-center">
 
               <h2 className="text-xl font-semibold text-white">
                 Total: ₹{total.toLocaleString()}
               </h2>
 
-              <button className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition">
-                Checkout
+              <button
+              onClick={()=>{
+                setloading(true)
+                router.push("/order/place-order")
+              }}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition">
+              {loading ? "Redirecting":"Checkout"}
               </button>
-
             </div>
           </>
         )}
