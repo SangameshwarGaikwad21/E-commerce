@@ -2,16 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
   const router = useRouter();
+  const { data: session } = useSession();
+
+  const userId = session?.user?.id;
 
   const [product, setProduct] = useState<any>(null);
   const [address, setAddress] = useState<any>(null);
 
   useEffect(() => {
+    if (!userId) return;
+
     const storedProduct = localStorage.getItem("buyNowItem");
-    const storedAddress = localStorage.getItem("address");
+    const storedAddress = localStorage.getItem(`address_${userId}`);
 
     if (!storedProduct) {
       router.push("/");
@@ -25,7 +31,7 @@ export default function Page() {
     } else {
       router.push("/userAddress");
     }
-  }, []);
+  }, [userId]);
 
   if (!product || !address) {
     return (
@@ -37,11 +43,15 @@ export default function Page() {
 
   const handlePlaceOrder = async () => {
     try {
-      const res = await fetch("/api/order/create", {
+      const res = await fetch("/api/order/create-order", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           product,
           address,
+          userId,
         }),
       });
 
@@ -49,20 +59,22 @@ export default function Page() {
 
       if (res.ok) {
         alert("Order placed successfully 🎉");
+
         localStorage.removeItem("buyNowItem");
+        localStorage.removeItem(`address_${userId}`);
+
         router.push("/");
       } else {
-        alert(data.message);
+        alert(data.message || "Order failed ❌");
       }
     } catch (err) {
+      console.error(err);
       alert("Something went wrong ❌");
     }
   };
 
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black px-6 py-16 flex items-center justify-center">
-
-      {/* Glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30 pointer-events-none" />
 
       <div className="max-w-2xl w-full relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
@@ -77,9 +89,7 @@ export default function Page() {
             Product
           </h2>
           <p className="text-white">{product.title}</p>
-          <p className="text-white font-bold mt-1">
-            ₹{product.price}
-          </p>
+          <p className="text-white font-bold mt-1">₹{product.price}</p>
         </div>
 
         {/* ADDRESS */}
@@ -95,6 +105,7 @@ export default function Page() {
           <p className="text-gray-400">{address.pincode}</p>
           <p className="text-gray-400">{address.phone}</p>
         </div>
+
         <button
           onClick={handlePlaceOrder}
           className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition transform hover:scale-[1.02] shadow-lg"

@@ -3,10 +3,14 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addAddress } from "@/redux/fetures/addresSlice";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
   const dispatch: any = useDispatch();
-  const userId = "507f1f77bcf86cd799439011";
+
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+  console.log(session);
 
   const [form, setForm] = useState({
     fullName: "",
@@ -20,6 +24,12 @@ export default function Page() {
   const handleSubmit = (e: any) => {
     e.preventDefault();
 
+    if (!userId) {
+      alert("Please login first ❌");
+      return;
+    }
+
+   
     if (
       !form.fullName ||
       !form.phone ||
@@ -36,8 +46,14 @@ export default function Page() {
       .unwrap()
       .then((res: any) => {
         alert("Address added ✅");
-        localStorage.setItem("address", JSON.stringify(res));
 
+        // ✅ STORE USER-SPECIFIC ADDRESS
+        localStorage.setItem(
+          `address_${userId}`,
+          JSON.stringify(res)
+        );
+
+        // reset form
         setForm({
           fullName: "",
           phone: "",
@@ -48,6 +64,7 @@ export default function Page() {
         });
       })
       .catch((err: any) => {
+        console.error(err);
         alert(err?.message || "Something went wrong ❌");
       });
   };
@@ -55,7 +72,7 @@ export default function Page() {
   return (
     <section className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black flex items-center justify-center px-4">
 
-      {/* Glow Effect */}
+      {/* Glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30 pointer-events-none" />
 
       <div className="w-full max-w-lg relative z-10 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-8 shadow-2xl">
@@ -66,7 +83,6 @@ export default function Page() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
-          {/* INPUT STYLE */}
           {[
             { key: "fullName", placeholder: "Full Name" },
             { key: "phone", placeholder: "Phone Number" },
@@ -89,7 +105,6 @@ export default function Page() {
             />
           ))}
 
-          {/* BUTTON */}
           <button
             type="submit"
             className="mt-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition transform hover:scale-[1.02] shadow-lg"
