@@ -61,10 +61,8 @@ export default function ProfilePage() {
           </p>  
         </div>
 
-        {/* Divider */}
         <div className="my-8 border-t border-gray-200" />
 
-        {/* Actions */}
         <div className="space-y-3">
           <button
             onClick={() => router.push("/forgotpassword")}

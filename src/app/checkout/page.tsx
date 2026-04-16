@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import { createOrder } from "@/redux/fetures/orderSlice";
+import toast from "react-hot-toast";
 
 export default function Page() {
   const router = useRouter();
@@ -77,13 +78,12 @@ export default function Page() {
     };
       await dispatch(createOrder(orderPayload)).unwrap();
 
-      alert("Order placed successfully 🎉");
+      toast.success("Order placed successfully 🎉");
 
       localStorage.removeItem("buyNowItem");
 
       router.push("/order/order-success");
     } catch (err: any) {
-      console.error(err);
       alert(err || "Order failed ❌");
     } finally {
       setLoading(false); 
@@ -123,7 +123,6 @@ export default function Page() {
           <p className="text-gray-400">{address.phone}</p>
         </div>
 
-        {/* Button */}
         <button
           onClick={handlePlaceOrder}
           disabled={loading}

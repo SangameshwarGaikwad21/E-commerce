@@ -40,7 +40,7 @@ function page() {
             whileHover={{ scale: 1.08 }}
             className={`bg-gradient-to-r ${item.color} p-[2px] rounded-2xl`}
           >
-            {/* Inner Card */}
+
             <div className="bg-black rounded-2xl p-6 text-center shadow-xl">
               
               <div className="text-4xl text-white mb-3">
@@ -58,6 +58,9 @@ function page() {
             </div>
           </motion.div>
         ))}
+      </div>
+      <div className="text-white">
+        Recent Product.        
       </div>
     </div>
   );
