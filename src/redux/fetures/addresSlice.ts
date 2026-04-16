@@ -31,7 +31,6 @@ const addressSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // ADD
       .addCase(addAddress.pending, (state) => {
         state.loading = true;
         state.error = null;

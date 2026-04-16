@@ -64,7 +64,6 @@ export default function Page() {
         });
       })
       .catch((err: any) => {
-        console.error(err);
         alert(err?.message || "Something went wrong ❌");
       });
   };

@@ -3,17 +3,23 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useDispatch } from "react-redux";
+import { createOrder } from "@/redux/fetures/orderSlice";
 
 export default function Page() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const userId = session?.user?.id;
 
   const [product, setProduct] = useState<any>(null);
   const [address, setAddress] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  const dispatch: any = useDispatch();
 
   useEffect(() => {
+    if (status === "loading") return;
     if (!userId) return;
 
     const storedProduct = localStorage.getItem("buyNowItem");
@@ -31,7 +37,7 @@ export default function Page() {
     } else {
       router.push("/userAddress");
     }
-  }, [userId]);
+  }, [userId, status, router]);
 
   if (!product || !address) {
     return (
@@ -42,34 +48,45 @@ export default function Page() {
   }
 
   const handlePlaceOrder = async () => {
+    if (!userId) {
+      alert("Please login first");
+      return;
+    }
+
     try {
-      const res = await fetch("/api/order/create-order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          product,
-          address,
-          userId,
-        }),
-      });
+      setLoading(true);
+      const orderPayload = {
+        user:userId,
+      orderItems: [{
+        product: product._id ?? product.id,
+        quantity: 1,
+      },
+    ],
+      totalAmount: product.price,
 
-      const data = await res.json();
+      shippingAddress: {
+        fullName: address.fullName,
+        address: address.street,
+        city: address.city,
+        postalCode: address.pincode,
+        country: "India",
+        phone: address.phone,
+      },
 
-      if (res.ok) {
-        alert("Order placed successfully 🎉");
+     paymentMethod: "COD",
+    };
+      await dispatch(createOrder(orderPayload)).unwrap();
 
-        localStorage.removeItem("buyNowItem");
-        localStorage.removeItem(`address_${userId}`);
+      alert("Order placed successfully 🎉");
 
-        router.push("/");
-      } else {
-        alert(data.message || "Order failed ❌");
-      }
-    } catch (err) {
+      localStorage.removeItem("buyNowItem");
+
+      router.push("/order/order-success");
+    } catch (err: any) {
       console.error(err);
-      alert("Something went wrong ❌");
+      alert(err || "Order failed ❌");
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -83,6 +100,7 @@ export default function Page() {
           Checkout
         </h1>
 
+        {/* Product */}
         <div className="border border-white/10 bg-white/5 p-4 rounded-xl mb-4">
           <h2 className="text-lg font-semibold text-purple-400 mb-2">
             Product
@@ -91,6 +109,7 @@ export default function Page() {
           <p className="text-white font-bold mt-1">₹{product.price}</p>
         </div>
 
+        {/* Address */}
         <div className="border border-white/10 bg-white/5 p-4 rounded-xl mb-6">
           <h2 className="text-lg font-semibold text-purple-400 mb-2">
             Delivery Address
@@ -104,11 +123,17 @@ export default function Page() {
           <p className="text-gray-400">{address.phone}</p>
         </div>
 
+        {/* Button */}
         <button
           onClick={handlePlaceOrder}
-          className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition transform hover:scale-[1.02] shadow-lg"
+          disabled={loading}
+          className={`w-full py-3 rounded-xl font-semibold transition transform shadow-lg ${
+            loading
+              ? "bg-gray-600 cursor-not-allowed"
+              : "bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 hover:scale-[1.02]"
+          } text-white`}
         >
-          Place Order
+          {loading ? "Placing Order..." : "Place Order"}
         </button>
 
       </div>

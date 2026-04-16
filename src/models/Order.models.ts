@@ -11,19 +11,31 @@ export interface IOrderItem {
 export interface IOrder extends Document {
   user: mongoose.Types.ObjectId;
   orderItems: IOrderItem[];
-  shippingAddress: string;
+
+  shippingAddress: {
+    fullName: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phone: string;
+  };
+
   totalPrice: number;
+
   paymentMethod: "COD" | "RAZORPAY";
   paymentStatus: "PENDING" | "PAID" | "FAILED";
+
   razorpayOrderId?: string;
   razorpayPaymentId?: string;
   razorpaySignature?: string;
-  orderStatus:  | "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED"    | "CANCELLED";
+
+  orderStatus: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+
   createdAt: Date;
   updatedAt: Date;
   paidAt?: Date;
 }
-
 const orderItemSchema = new Schema<IOrderItem>({
   product: {
     type: Schema.Types.ObjectId,
@@ -66,8 +78,12 @@ const orderSchema = new Schema<IOrder>(
     },
 
     shippingAddress: {
-      type: String,
-      required: true,
+      fullName: { type: String, required: true },
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+      postalCode: { type: String, required: true },
+      country: { type: String, required: true },
+      phone: { type: String, required: true },
     },
 
     totalPrice: {

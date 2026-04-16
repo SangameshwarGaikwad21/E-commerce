@@ -16,15 +16,12 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const { data: session } = useSession();
 
-  // ✅ GET PRODUCT STATE
   const { product, loading, error } = useAppSelector(
     (state) => state.product
   );
 
-  // ✅ GET CART ITEMS (IMPORTANT FIX)
   const cartItems = useAppSelector((state) => state.cart.items);
 
-  // ✅ SAFE CHECK (important)
   const isInCart = product
     ? cartItems.some((item) => item.id === product._id)
     : false;
@@ -58,8 +55,6 @@ const Page = () => {
       <div className="max-w-6xl w-full relative z-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
 
         <div className="flex flex-col md:flex-row">
-
-          {/* IMAGE */}
           <div className="md:w-1/2 flex items-center justify-center p-10 bg-gradient-to-br from-gray-800 to-gray-900">
             <img
               src={product.images?.[0] || "/placeholder.png"}
@@ -68,7 +63,6 @@ const Page = () => {
             />
           </div>
 
-          {/* CONTENT */}
           <div className="md:w-1/2 p-10 space-y-6">
 
             <span className="text-xs font-semibold bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full">
@@ -120,9 +114,16 @@ const Page = () => {
 
               <button className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold py-4 rounded-xl hover:opacity-90 transition transform hover:scale-[1.03] shadow-lg"
               onClick={() => {
-                  if (!session) {
+                  if (status === "loading") {
+                    return; // wait for session
+                  }
+
+                  if (!session || !session.user?.id) {
                     return router.push("/login");
                   }
+
+                  const userId = session.user.id;
+
                   const buyNowProduct = {
                     id: product._id,
                     title: product.title,
@@ -130,13 +131,14 @@ const Page = () => {
                     image: product.images?.[0],
                   };
 
-                 localStorage.setItem("buyNowItem", JSON.stringify(buyNowProduct));
-                  const address = localStorage.getItem("address");
+                  localStorage.setItem("buyNowItem", JSON.stringify(buyNowProduct));
+
+                  const address = localStorage.getItem(`address_${userId}`);
 
                   if (!address) {
-                    router.push("/userAddress"); 
+                    router.push("/userAddress");
                   } else {
-                    router.push("/checkout"); 
+                    router.push("/checkout");
                   }
                 }}
               >
