@@ -1,8 +1,12 @@
 "use client"
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { FaBox, FaUsers, FaShoppingCart } from "react-icons/fa";
 
 function page() {
+
+  
+
   const stats = [
     {
       title: "Total Products",

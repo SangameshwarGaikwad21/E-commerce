@@ -39,7 +39,7 @@ function HeroSection() {
               onClick={() => router.push("/category")}
               className="border border-white/20 px-6 py-3 rounded-xl hover:bg-white/10 transition"
             >
-              Explore
+              Category
             </button>
           </div>
           <div className="flex items-center gap-4 pt-4 text-sm text-gray-400">
