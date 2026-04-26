@@ -24,29 +24,33 @@ export async function POST(request:NextRequest) {
         const description = formData.get("description") as string;
         const price = Number(formData.get("price"));
         const category = formData.get("category") as string;
-        const images = formData.get("image") as File | null;
+        const imageFiles = formData.getAll("images") as File[];
+        const fallbackImage = formData.get("image") as File | null;
+        const images = imageFiles.length > 0 ? imageFiles : fallbackImage ? [fallbackImage] : [];
        
 
-        if (!title || !description || !price || !category ||  !images) {
+        if (!title || !description || !price || !category || images.length === 0) {
             return NextResponse.json(
             { error: "All required fields must be filled" },
             { status: 400 }
         )}
 
-        const uploadOnCloudinary= await uploadImageToCloudinary(images)
+        const uploadedImages = await Promise.all(
+            images.map((image) => uploadImageToCloudinary(image))
+        );
 
         const newProduct=await Products.create({
             title,
             description,
             price,
             category,
-            images: [uploadOnCloudinary.secure_url]
+            images: uploadedImages.map((image) => image.secure_url)
         })
 
         return NextResponse.json(
             {
                 message:"Product is created Successfully",
-                prodct:newProduct
+                product:newProduct
             },
             {status:201}
         )

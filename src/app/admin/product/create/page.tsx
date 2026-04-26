@@ -17,10 +17,10 @@ export default function Page() {
     description: "",
     price: 0,
     category: "",
-    image: null as File | null,
+    images: [] as File[],
   });
 
-  const [preview, setPreview] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -31,11 +31,11 @@ export default function Page() {
   };
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    setForm({ ...form, image: file });
-    setPreview(URL.createObjectURL(file));
+    setForm({ ...form, images: files });
+    setPreviews(files.map((file) => URL.createObjectURL(file)));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,7 +47,9 @@ export default function Page() {
     formData.append("price", String(form.price));
     formData.append("category", form.category);
 
-    if (form.image) formData.append("image", form.image);
+    form.images.forEach((image) => {
+      formData.append("images", image);
+    });
 
     try {
       await dispatch(createProduct(formData)).unwrap();
@@ -140,22 +142,28 @@ export default function Page() {
             {/* IMAGE */}
             <div>
               <Label className="text-gray-300 text-sm">
-                Product Image
+                Product Images
               </Label>
               <Input
                 type="file"
+                multiple
+                accept="image/*"
                 onChange={handleFile}
                 className="mt-1 h-12 bg-gray-900 border border-white/10 text-gray-400 cursor-pointer"
               />
             </div>
 
             {/* PREVIEW */}
-            {preview && (
-              <div className="bg-gray-900 p-4 rounded-xl flex justify-center">
-                <img
-                  src={preview}
-                  className="h-32 object-contain rounded-lg"
-                />
+            {previews.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-gray-900 p-4 rounded-xl">
+                {previews.map((preview) => (
+                  <img
+                    key={preview}
+                    src={preview}
+                    alt="Product preview"
+                    className="h-28 w-full object-contain rounded-lg bg-black"
+                  />
+                ))}
               </div>
             )}
 

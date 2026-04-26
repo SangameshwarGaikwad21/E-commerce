@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getProducts } from "@/redux/fetures/productSlice";
 import { motion } from "framer-motion";
+import type { Product } from "@/types/product";
 
 const ProductList = () => {
   const dispatch = useAppDispatch();
@@ -65,7 +66,7 @@ const ProductList = () => {
           /* Grid */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
-            {limitedProducts.map((item: any) => (
+            {limitedProducts.map((item: Product) => (
               <motion.div
                 key={item._id}
                 initial={{ opacity: 0, y: 60 }}
@@ -86,6 +87,23 @@ const ProductList = () => {
                       alt={item.title}
                       className="h-52 object-contain transition-transform duration-500 group-hover:scale-110"
                     />
+
+                    {item.images?.length > 1 ? (
+                      <div className="absolute bottom-4 left-4 flex gap-2">
+                        {item.images.slice(0, 3).map((image, index) => (
+                          <span
+                            key={`${image}-${index}`}
+                            className="h-9 w-9 overflow-hidden rounded-lg border border-white/15 bg-black/40"
+                          >
+                            <img
+                              src={image}
+                              alt={`${item.title} ${index + 1}`}
+                              className="h-full w-full object-cover"
+                            />
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
 
                     {/* Discount */}
                     {item.discountPrice && (

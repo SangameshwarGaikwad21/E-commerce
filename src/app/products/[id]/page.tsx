@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { getSingleProduct } from "@/redux/fetures/productSlice";
 import { addToCart } from "@/redux/fetures/cartSlice";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 
 const Page = () => {
   const router = useRouter();
@@ -14,7 +13,8 @@ const Page = () => {
   const id = params?.id as string;
 
   const dispatch = useAppDispatch();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const [selectedImage, setSelectedImage] = useState("");
 
   const { product, loading, error } = useAppSelector(
     (state) => state.product
@@ -55,12 +55,37 @@ const Page = () => {
       <div className="max-w-6xl w-full relative z-10 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden">
 
         <div className="flex flex-col md:flex-row">
-          <div className="md:w-1/2 flex items-center justify-center p-10 bg-gradient-to-br from-gray-800 to-gray-900">
-            <img
-              src={product.images?.[0] || "/placeholder.png"}
-              alt={product.title}
-              className="h-72 object-contain transition duration-500 hover:scale-110"
-            />
+          <div className="md:w-1/2 p-6 bg-gradient-to-br from-gray-800 to-gray-900">
+            <div className="flex min-h-96 items-center justify-center rounded-3xl bg-black/25 p-6">
+              <img
+                src={selectedImage || product.images?.[0] || "/placeholder.png"}
+                alt={product.title}
+                className="h-80 max-w-full object-contain transition duration-500 hover:scale-105"
+              />
+            </div>
+
+            {product.images?.length > 1 ? (
+              <div className="mt-5 grid grid-cols-4 gap-3">
+                {product.images.map((image, index) => (
+                  <button
+                    key={`${image}-${index}`}
+                    type="button"
+                    onClick={() => setSelectedImage(image)}
+                    className={`h-20 rounded-2xl border bg-black/30 p-2 transition ${
+                      selectedImage === image
+                        ? "border-purple-400"
+                        : "border-white/10 hover:border-purple-500/40"
+                    }`}
+                  >
+                    <img
+                      src={image}
+                      alt={`${product.title} ${index + 1}`}
+                      className="h-full w-full object-contain"
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
           <div className="md:w-1/2 p-10 space-y-6">
@@ -129,6 +154,7 @@ const Page = () => {
                     title: product.title,
                     price: Number(product.price),
                     image: product.images?.[0],
+                    images: product.images,
                   };
 
                   localStorage.setItem("buyNowItem", JSON.stringify(buyNowProduct));

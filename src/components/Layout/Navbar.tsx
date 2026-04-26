@@ -1,22 +1,27 @@
 "use client";
-import { useState, useEffect } from "react";
+import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaShoppingCart } from "react-icons/fa";
-import { Search, Menu, User } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { ChevronDown, Menu, Search, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { getProducts } from "@/redux/fetures/productSlice";
+import { useEffect } from "react";
 
 const Navbar = () => {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session } = useSession();
+  const dispatch = useAppDispatch();
 
   const cartItems = useAppSelector((state) => state.cart.items);
+  const products = useAppSelector((state) => state.product.products);
 
   const totalQuantity = cartItems.reduce(
     (acc, item) => acc + item.quantity,
@@ -24,9 +29,44 @@ const Navbar = () => {
   );
 
   useEffect(() => {
-    setMobileOpen(false);
-    setProfileOpen(false);
-  }, [pathname]);
+    dispatch(getProducts());
+  }, [dispatch]);
+
+  const categories = useMemo(() => {
+    return Array.from(
+      new Set(products.map((product) => product.category).filter(Boolean))
+    ) as string[];
+  }, [products]);
+
+  const currentSearch = searchParams.get("search") || "";
+  const currentCategory = searchParams.get("category") || "all";
+
+  const goToProducts = (search: string, category: string) => {
+    const params = new URLSearchParams();
+
+    if (search.trim()) params.set("search", search.trim());
+    if (category !== "all") params.set("category", category);
+
+    const query = params.toString();
+    router.push(query ? `/product?${query}` : "/product");
+  };
+
+  const handleSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const search = String(formData.get("search") || "");
+    const category = String(formData.get("category") || "all");
+
+    goToProducts(search, category);
+  };
+
+  const handleCategoryChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const form = event.currentTarget.form;
+    const formData = form ? new FormData(form) : null;
+    const search = formData ? String(formData.get("search") || "") : "";
+
+    goToProducts(search, event.target.value);
+  };
 
   return (
     <motion.header
@@ -51,23 +91,49 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* SEARCH */}
-         <div className="hidden md:flex items-center w-[450px] relative">
+          <form
+            key={`desktop-${currentSearch}-${currentCategory}`}
+            onSubmit={handleSearch}
+            className="hidden md:grid w-[560px] grid-cols-[1fr_190px] overflow-hidden rounded-full border border-slate-700 bg-slate-800"
+          >
+            <label className="relative flex items-center">
               <input
+                ref={searchRef}
                 type="text"
+                name="search"
+                defaultValue={currentSearch}
                 placeholder="Search products..."
-                className="w-full h-10 rounded-full pl-5 pr-10 
-                bg-slate-800 border border-slate-700 
-                text-white placeholder:text-gray-400
-                focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="h-10 w-full bg-transparent pl-5 pr-10 text-sm text-white placeholder:text-gray-400 focus:outline-none"
               />
 
               <Search
                 size={18}
                 className="absolute right-3 text-gray-400 pointer-events-none"
               />
+            </label>
 
-            </div>
+            <label className="relative flex items-center border-l border-slate-700">
+              <select
+                name="category"
+                defaultValue={currentCategory}
+                onChange={handleCategoryChange}
+                className="h-10 w-full appearance-none bg-transparent pl-4 pr-9 text-sm text-white outline-none"
+              >
+                <option className="bg-slate-950" value="all">
+                  All Categories
+                </option>
+                {categories.map((category) => (
+                  <option className="bg-slate-950" key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                size={16}
+                className="pointer-events-none absolute right-3 text-gray-400"
+              />
+            </label>
+          </form>
           {/* RIGHT */}
           <div className="flex items-center gap-4">
 
@@ -154,6 +220,48 @@ const Navbar = () => {
 
           </div>
         </div>
+
+        <form
+          key={`mobile-${currentSearch}-${currentCategory}`}
+          onSubmit={handleSearch}
+          className="mt-3 grid gap-2 md:hidden"
+        >
+          <label className="relative flex h-10 items-center rounded-full border border-slate-700 bg-slate-800">
+            <input
+              type="text"
+              name="search"
+              defaultValue={currentSearch}
+              placeholder="Search products..."
+              className="h-full w-full bg-transparent pl-4 pr-10 text-sm text-white outline-none placeholder:text-gray-400"
+            />
+            <Search
+              size={17}
+              className="pointer-events-none absolute right-3 text-gray-400"
+            />
+          </label>
+
+          <label className="relative flex h-10 items-center rounded-full border border-slate-700 bg-slate-800">
+            <select
+              name="category"
+              defaultValue={currentCategory}
+              onChange={handleCategoryChange}
+              className="h-full w-full appearance-none bg-transparent pl-4 pr-10 text-sm text-white outline-none"
+            >
+              <option className="bg-slate-950" value="all">
+                All Categories
+              </option>
+              {categories.map((category) => (
+                <option className="bg-slate-950" key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute right-3 text-gray-400"
+            />
+          </label>
+        </form>
       </div>
     </motion.header>
   );
