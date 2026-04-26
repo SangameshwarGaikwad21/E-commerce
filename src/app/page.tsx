@@ -1,15 +1,14 @@
 import Footer from "@/components/Layout/Footer"
 import Herosection from "@/components/Layout/Herosection"
 import ProductList from "@/components/products/ProductsList"
-
-import Category from "@/components/Layout/Category"
+// import Category from "@/app/category/page"
 
 const page = () => {
 
   return (
     <>
-    <Herosection/>
       {/* <Category/> */}
+      <Herosection/>
       <ProductList/> 
       <Footer/>
     </>

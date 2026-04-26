@@ -1,48 +1,42 @@
 "use client";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Smartphone, Laptop, ShoppingBag, Shirt } from "lucide-react";
+
+const categories = [
+  { name: "Mobiles", icon: "📱", slug: "mobiles" },
+  { name: "Laptops", icon: "💻", slug: "laptops" },
+  { name: "Fashion", icon: "👕", slug: "fashion" },
+  { name: "Electronics", icon: "🎧", slug: "electronics" },
+  { name: "Home", icon: "🏠", slug: "home" },
+  { name: "Appliances", icon: "🧊", slug: "appliances" },
+];
 
 const Category = () => {
-  const router = useRouter();
-
-  const categories = [
-    { _id: "1", name: "Mobile", slug: "electronics", icon: Smartphone },
-    { _id: "2", name: "Laptop", slug: "clothing", icon: Laptop },
-    { _id: "3", name: "Shoes", slug: "shoes", icon: ShoppingBag },
-    { _id: "4", name: "Dress", slug: "accessories", icon: Shirt },
-  ];
+  const router = useRouter(); 
 
   return (
-    <div className="p-6 md:p-10">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800">
-        Shop by Category
-      </h2>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {categories.map((cat) => {
-          const Icon = cat.icon;
-
-          return (
-            <div
-              key={cat._id}
+    <section className="bg-slate-950 py-10">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4">
+          {categories.map((cat, index) => (
+            <motion.div
+              key={index}
+              whileHover={{ scale: 1.05 }}
+              className="cursor-pointer bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col items-center justify-center text-center hover:border-purple-500/40 transition"
               onClick={() => router.push(`/category/${cat.slug}`)}
-              className="group cursor-pointer p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl transition duration-300 shadow-md hover:shadow-xl hover:scale-105"
             >
-              <div className="mb-4">
-                <Icon className="w-8 h-8 text-blue-400 group-hover:text-blue-300 transition" />
+              <div className="text-2xl mb-1">
+                {cat.icon}
               </div>
 
-              <h3 className="text-lg font-semibold group-hover:text-blue-300 transition">
+              <h3 className="text-xs text-white font-medium">
                 {cat.name}
               </h3>
-              <p className="text-sm text-gray-400 mt-1">
-                Explore products →
-              </p>
-            </div>
-          );
-        })}
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

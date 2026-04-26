@@ -25,8 +25,6 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black px-6 py-10">
-
-      {/* Glow */}
       <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30 pointer-events-none" />
       <div className="max-w-5xl mx-auto relative z-10">
         <h1 className="text-3xl font-bold text-white mb-8">
