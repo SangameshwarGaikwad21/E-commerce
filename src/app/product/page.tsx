@@ -31,14 +31,10 @@ const Page = () => {
 
   return (
     <section className="relative py-20 bg-slate-950 overflow-hidden">
-      
-      {/* Glow */}
       <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-purple-600/20 blur-[140px] rounded-full"></div>
       <div className="absolute bottom-[-100px] right-[-100px] w-[500px] h-[500px] bg-pink-600/20 blur-[140px] rounded-full"></div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-
-        {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-white">
             All Products
@@ -47,8 +43,6 @@ const Page = () => {
             Explore all products 🚀
           </p>
         </div>
-
-        {/* ✅ GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
           {products?.map((item: any) => (
@@ -63,8 +57,6 @@ const Page = () => {
             >
 
               <div className="relative rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 overflow-hidden shadow-lg hover:shadow-purple-500/20 transition-all duration-500 hover:-translate-y-3">
-
-                {/* Image */}
                 <div className="relative h-64 flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
 
                   <img
@@ -72,16 +64,12 @@ const Page = () => {
                     alt={item.title}
                     className="h-52 object-contain transition-transform duration-500 group-hover:scale-110"
                   />
-
-                  {/* Discount */}
                   {item.discountPrice && (
                     <span className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-3 py-1 rounded-full font-semibold">
                       SALE
                     </span>
                   )}
                 </div>
-
-                {/* Content */}
                 <div className="p-5 space-y-2">
 
                   <h3 className="text-lg font-semibold text-white line-clamp-1 group-hover:text-purple-400 transition">
@@ -104,12 +92,8 @@ const Page = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Hover Border */}
                 <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-purple-500/40 transition"></div>
-
               </div>
-
             </motion.div>
           ))}
 

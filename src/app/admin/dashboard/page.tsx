@@ -1,19 +1,30 @@
 "use client"
+import { getProducts } from "@/redux/fetures/productSlice";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBox, FaUsers, FaShoppingCart } from "react-icons/fa";
 
 function page() {
+
+  const dispatch=useAppDispatch()
+
+  const {products}=useAppSelector((state)=>state.product)
+
+  useEffect(()=>{
+    dispatch(getProducts())
+  },[dispatch])
+
   const stats = [
     {
       title: "Total Products",
-      value: 0,
+      value: products?.length || 0,
       icon: <FaBox />,
       color: "from-green-400 to-green-600",
     },
     {
       title: "Total Users",
-      value: 0,
+      value: 100,
       icon: <FaUsers />,
       color: "from-blue-400 to-blue-600",
     },
@@ -41,22 +52,20 @@ function page() {
             whileHover={{ scale: 1.08 }}
             className={`bg-gradient-to-r ${item.color} p-[2px] rounded-2xl`}
           >
+            <div className="bg-black rounded-2xl p-6 text-center shadow-xl h-[180px] flex flex-col justify-center">
+                  <div className="text-4xl text-white mb-3 flex justify-center">
+                    {item.icon}
+                  </div>
 
-            <div className="bg-black rounded-2xl p-6 text-center shadow-xl">
-              
-              <div className="text-4xl text-white mb-3">
-                {item.icon}
-              </div>
+                  <h2 className="text-3xl font-bold text-white">
+                    {item.value}
+                  </h2>
 
-              <h2 className="text-3xl font-bold text-white">
-                {item.value}
-              </h2>
+                  <p className="text-gray-400 mt-2">
+                    {item.title}
+                  </p>
 
-              <p className="text-gray-400 mt-2">
-                {item.title}
-              </p>
-
-            </div>
+                </div>
           </motion.div>
         ))}
       </div>

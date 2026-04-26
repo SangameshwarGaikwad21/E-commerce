@@ -1,4 +1,5 @@
 import axiosInstance from "@/lib/axios";
+import { AxiosError } from "axios";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface OrderItem{
@@ -27,14 +28,14 @@ export interface CreateOrderPayload {
     phone: string;
   };
 
-  paymentMethod: "COD" | "ONLINE";
+  paymentMethod: "COD" | "RAZORPAY";
 }
 
 export interface OrderResponse {
   _id: string;
-  userId: string;
-  items: OrderItem[];
-  totalAmount: number;
+  user: string;
+  orderItems: OrderItem[];
+  totalPrice: number;
 
   shippingAddress: {
     fullName: string;
@@ -46,7 +47,8 @@ export interface OrderResponse {
   };
 
   paymentMethod: string;
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
+  paymentStatus: "PENDING" | "PAID" | "FAILED";
+  orderStatus: "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
   createdAt: string;
   updatedAt: string;
@@ -57,10 +59,11 @@ export const createOrder=createAsyncThunk<OrderResponse,CreateOrderPayload,{reje
     async(data,{rejectWithValue})=>{
         try {
             const res=await axiosInstance.post("/order/create-order",data)
-            return res.data.data
+            return res.data.order
         } 
-        catch (error:any) {
-              return rejectWithValue(error.response?.data || "Something went wrong");
+        catch (error: unknown) {
+            const axiosError = error as AxiosError<{ message?: string }>;
+            return rejectWithValue(axiosError.response?.data?.message || "Something went wrong");
         }
     }    
 )

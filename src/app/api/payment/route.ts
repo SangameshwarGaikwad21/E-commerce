@@ -7,12 +7,19 @@ export async function POST(req: NextRequest) {
   try {
     await connectionToDB();
 
-    const {razorpay_order_id,razorpay_payment_id, razorpay_signature, } = await req.json();
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json();
+
+    if (!process.env.RAZORPAY_KEY_SECRET) {
+      return NextResponse.json(
+        { message: "Razorpay secret is not configured" },
+        { status: 500 }
+      );
+    }
 
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest("hex");
 
@@ -23,9 +30,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const order = await Order.findOne({
-      _id: razorpay_order_id,
-    });
+    const order = await Order.findOne({ razorpayOrderId: razorpay_order_id });
 
     if (!order) {
       return NextResponse.json(
@@ -36,6 +41,8 @@ export async function POST(req: NextRequest) {
 
     order.paymentStatus = "PAID";
     order.orderStatus = "PROCESSING";
+    order.razorpayPaymentId = razorpay_payment_id;
+    order.razorpaySignature = razorpay_signature;
     order.paidAt = new Date();
 
     await order.save();

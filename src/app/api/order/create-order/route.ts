@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const { user, orderItems, shippingAddress,paymentMethod} = body;
+    const { user, orderItems, shippingAddress, paymentMethod } = body;
 
     if (!orderItems || orderItems.length === 0) {
       return NextResponse.json(
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    let items = [];
+    const items = [];
     let totalPrice = 0;
 
     for (const item of orderItems) {
@@ -31,14 +31,12 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      console.log(product);
-
       const orderItem = {
         product: product._id,
-        name: product.name || product.title,
+        name: product.title,
         price: product.price,
         quantity: item.quantity,
-        image: product.image,
+        image: product.images?.[0],
       };
 
       totalPrice += product.price * item.quantity;
@@ -50,7 +48,9 @@ export async function POST(req: NextRequest) {
       orderItems: items,
       shippingAddress,
       totalPrice,
-      paymentMethod,
+      paymentMethod: paymentMethod || "COD",
+      paymentStatus: paymentMethod === "RAZORPAY" ? "PENDING" : "PENDING",
+      orderStatus: paymentMethod === "RAZORPAY" ? "PENDING" : "PROCESSING",
     });
 
     return NextResponse.json(

@@ -18,18 +18,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      return NextResponse.json(
+        { message: "Razorpay keys are not configured" },
+        { status: 500 }
+      );
+    }
+
     const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID!,
-      key_secret: process.env.RAZORPAY_KEY_SECRET!,
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
     const options = {
-      amount: order.totalPrice * 100, // paisa
+      amount: Math.round(order.totalPrice * 100),
       currency: "INR",
       receipt: order._id.toString(),
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
+
+    order.razorpayOrderId = razorpayOrder.id;
+    await order.save();
 
     return NextResponse.json({
       razorpayOrderId: razorpayOrder.id,
