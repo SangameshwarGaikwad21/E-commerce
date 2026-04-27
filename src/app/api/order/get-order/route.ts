@@ -1,25 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/config/db";
 import { Order } from "@/models/Order.models";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function GET(request:NextRequest) {
+export async function GET(request: NextRequest) {
     try {
-        await connectionToDB(); 
-        
-        const orders=await Order.find({})
-        if(!orders || orders.length === 0){
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user?.id) {
             return NextResponse.json(
-                {message:"There is no order"}
-            )
+                { message: "Login required" },
+                { status: 401 }
+            );
         }
 
+        await connectionToDB(); 
+
+        const { searchParams } = new URL(request.url);
+        const userId = searchParams.get("userId");
+        const isAdmin = session.user.role === "admin";
+        const filter = isAdmin && userId === "all" ? {} : { user: session.user.id };
+
+        const orders = await Order.find(filter).sort({ createdAt: -1 });
+
         return NextResponse.json(
-            {message:"Your are All Order is here",orders},
-            {status:201}
+            { message: "Orders fetched successfully", orders },
+            { status: 200 }
         )
 
     } 
-    catch (error) {
+    catch {
         return NextResponse.json(
             {message:"Order are not get"},
             {status:500}

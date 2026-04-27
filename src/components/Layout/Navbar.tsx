@@ -2,7 +2,7 @@
 import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaShoppingCart } from "react-icons/fa";
-import { ChevronDown, Menu, Search, User } from "lucide-react";
+import { ChevronDown, Menu, Search, User, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
@@ -11,7 +11,7 @@ import { getProducts } from "@/redux/fetures/productSlice";
 import { useEffect } from "react";
 
 const Navbar = () => {
-  const [, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -48,6 +48,8 @@ const Navbar = () => {
     if (category !== "all") params.set("category", category);
 
     const query = params.toString();
+    setMobileOpen(false);
+    setProfileOpen(false);
     router.push(query ? `/product?${query}` : "/product");
   };
 
@@ -86,7 +88,7 @@ const Navbar = () => {
 
             <Link href="/">
               <h1 className="text-2xl font-bold text-white">
-                Store<span className="text-blue-500">_App</span>
+                Store<span className="text-purple-400">_App</span>
               </h1>
             </Link>
           </div>
@@ -180,6 +182,13 @@ const Navbar = () => {
                           Profile
                         </Link>
 
+                        <Link
+                          href="/orders"
+                          className="block px-4 py-2 text-white hover:bg-white/10"
+                        >
+                          My Orders
+                        </Link>
+
                         {session.user.role === "admin" && (
                           <Link
                             href="/admin/dashboard"
@@ -262,6 +271,46 @@ const Navbar = () => {
             />
           </label>
         </form>
+
+        <AnimatePresence>
+          {mobileOpen ? (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="mt-3 overflow-hidden rounded-2xl border border-white/10 bg-slate-950/95 p-3 md:hidden"
+            >
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-semibold text-slate-400">Menu</span>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="rounded-lg p-2 text-slate-300 hover:bg-white/10"
+                  aria-label="Close menu"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="grid gap-1 text-sm">
+                {[
+                  { href: "/", label: "Home" },
+                  { href: "/product", label: "Products" },
+                  { href: "/cart", label: "Cart" },
+                  { href: "/orders", label: "My Orders" },
+                  { href: "/profile", label: "Profile" },
+                ].map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-xl px-3 py-2 text-white hover:bg-white/10"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
     </motion.header>
   );

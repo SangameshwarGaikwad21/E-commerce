@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import connectionToDB from "@/config/db";
 import { Order } from "@/models/Order.models";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function DELETE(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
   try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ message: "Login required" }, { status: 401 });
+    }
+
     await connectionToDB();
 
     const { searchParams } = new URL(req.url);
@@ -24,22 +32,40 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const deletedOrder = await Order.findByIdAndDelete(id);
+    const order = await Order.findById(id);
 
-    if (!deletedOrder) {
+    if (!order) {
       return NextResponse.json(
         { message: "Order not found" },
         { status: 404 }
       );
     }
 
+    if (order.user.toString() !== session.user.id && session.user.role !== "admin") {
+      return NextResponse.json({ message: "Not allowed" }, { status: 403 });
+    }
+
+    if (["SHIPPED", "DELIVERED", "CANCELLED"].includes(order.orderStatus)) {
+      return NextResponse.json(
+        { message: "This order cannot be cancelled now" },
+        { status: 400 }
+      );
+    }
+
+    order.orderStatus = "CANCELLED";
+    if (order.paymentStatus === "PENDING") {
+      order.paymentStatus = "FAILED";
+    }
+
+    await order.save();
+
     return NextResponse.json(
-      { message: "Order deleted successfully" },
+      { message: "Order cancelled successfully", order },
       { status: 200 }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { message: "Delete failed" },
+      { message: "Cancel failed" },
       { status: 500 }
     );
   }

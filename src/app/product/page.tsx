@@ -20,6 +20,8 @@ const Page = () => {
 
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "all";
+  const minPrice = Number(searchParams.get("min") || 0);
+  const maxPrice = Number(searchParams.get("max") || 0);
 
   const filteredProducts = useMemo(() => {
     const query = normalize(search);
@@ -32,10 +34,13 @@ const Page = () => {
 
       const matchesCategory =
         category === "all" || normalize(product.category) === normalize(category);
+      const matchesPrice =
+        (!minPrice || product.price >= minPrice) &&
+        (!maxPrice || product.price <= maxPrice);
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesPrice;
     });
-  }, [category, products, search]);
+  }, [category, maxPrice, minPrice, products, search]);
 
   const activeFilterLabel =
     category === "all" && !search
@@ -43,6 +48,20 @@ const Page = () => {
       : `${filteredProducts.length} results${
           search ? ` for "${search}"` : ""
         }${category !== "all" ? ` in ${category}` : ""}`;
+
+  const applyPriceFilter = (formData: FormData) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const min = String(formData.get("min") || "").trim();
+    const max = String(formData.get("max") || "").trim();
+
+    if (min) params.set("min", min);
+    else params.delete("min");
+
+    if (max) params.set("max", max);
+    else params.delete("max");
+
+    router.push(`/product?${params.toString()}`);
+  };
 
   if (loading) {
     return (
@@ -70,6 +89,31 @@ const Page = () => {
             {activeFilterLabel}
           </p>
         </div>
+
+        <form
+          action={applyPriceFilter}
+          className="mb-8 grid gap-3 rounded-3xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto]"
+        >
+          <input
+            name="min"
+            type="number"
+            min="0"
+            defaultValue={minPrice || ""}
+            placeholder="Min price"
+            className="h-11 rounded-2xl border border-white/10 bg-black/25 px-4 text-sm text-white outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-purple-500"
+          />
+          <input
+            name="max"
+            type="number"
+            min="0"
+            defaultValue={maxPrice || ""}
+            placeholder="Max price"
+            className="h-11 rounded-2xl border border-white/10 bg-black/25 px-4 text-sm text-white outline-none placeholder:text-slate-500 focus:ring-2 focus:ring-purple-500"
+          />
+          <button className="h-11 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 text-sm font-semibold text-white hover:opacity-90">
+            Apply Price
+          </button>
+        </form>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filteredProducts.map((item) => (

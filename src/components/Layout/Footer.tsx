@@ -10,9 +10,9 @@ const Footer = () => {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
       viewport={{ once: true }}
-      className="bg-black border-t border-gray-800 mt-20"
+      className="bg-black border-t border-gray-800 mt-0"
     >
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-6 py-8">
 
         <div className="grid md:grid-cols-3 gap-10 text-gray-400">
 
@@ -79,7 +79,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom */}
-        <div className="border-t border-gray-800 mt-10 pt-6 text-center text-sm text-gray-500">
+        <div className="border-t border-gray-800 mt-8 pt-5 text-center text-sm text-gray-500">
           © {new Date().getFullYear()} Store_App. All rights reserved.
         </div>
 

@@ -97,14 +97,6 @@ export default function Page() {
                   >
                     Remove
                   </button>
-                  <button
-                    onClick={() =>
-                        router.push(`/order/place-order?type=single&id=${item.id}`)
-                    }
-                    className="text-purple-400 hover:text-purple-500 font-medium"
-                  >
-                    Buy this
-                  </button>
                 </div>
               ))}
             </div>
@@ -118,7 +110,7 @@ export default function Page() {
               <button
               onClick={()=>{
                 setloading(true)
-                router.push("/order/place-order")
+                router.push("/checkout")
               }}
               className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:opacity-90 transition">
               {loading ? "Redirecting":"Checkout"}

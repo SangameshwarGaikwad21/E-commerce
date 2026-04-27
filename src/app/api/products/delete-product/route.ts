@@ -4,7 +4,7 @@ import Products from "@/models/Product.models";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/options";
 
-export async function DELETE(request:NextRequest,{ params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
     try {
       const session = await getServerSession(authOptions);
         

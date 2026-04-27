@@ -3,10 +3,7 @@ import connectionToDB from "@/config/db";
 import Products from "@/models/Product.models";
 import mongoose from "mongoose";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest) {
   try {
     await connectionToDB();
 
@@ -37,11 +34,12 @@ export async function GET(
       { status: 200 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       {
         message: "Failed to fetch product",
-        error: error.message,
+        error: message,
       },
       { status: 500 }
     );

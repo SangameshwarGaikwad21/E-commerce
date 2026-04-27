@@ -38,7 +38,7 @@ const ProductList = () => {
   const limitedProducts = products?.slice(0, 6);
 
   return (
-    <section className="relative py-20 bg-slate-950 overflow-hidden">
+    <section className="relative py-12 bg-slate-950 overflow-hidden">
 
       {/* Gradient Glow */}
       <div className="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-purple-600/20 blur-[140px] rounded-full"></div>
@@ -47,7 +47,7 @@ const ProductList = () => {
       <div className="max-w-7xl mx-auto px-6 relative z-10">
 
         {/* Heading */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl font-bold text-white">
             Featured Collection
           </h2>
@@ -148,7 +148,7 @@ const ProductList = () => {
         )}
 
         {/* 🔥 View All Button */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-10">
           <button
             onClick={() => router.push("/product")}
             className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl font-semibold hover:scale-105 transition"
