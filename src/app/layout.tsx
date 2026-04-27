@@ -4,7 +4,7 @@ import "./globals.css";
 import NavbarWrapper from "@/components/Layout/Navbarwrapper";
 import ReduxProvider from "@/redux/ReduxProvider";
 import { Toaster } from "react-hot-toast";
-
+import { Suspense } from "react"; // ✅ ADD THIS
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,18 +23,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReduxProvider>
-          <NavbarWrapper />
-                {children}
-              <Toaster position="top-center" />
+          <Suspense fallback={<div>Loading...</div>}>
+            <NavbarWrapper />
+            {children}
+          </Suspense>
+          <Toaster position="top-center" />
         </ReduxProvider>
       </body>
     </html>
