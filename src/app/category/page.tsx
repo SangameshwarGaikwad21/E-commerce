@@ -1,5 +1,4 @@
 "use client";
-
 import { getProducts } from "@/redux/fetures/productSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { motion } from "framer-motion";
