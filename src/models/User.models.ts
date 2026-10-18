@@ -25,7 +25,14 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, "password is required"],
+      required: function (this: any) {
+        return this.authProvider === "credentials";
+      },
+    },
+    authProvider: {
+      type: String,
+      enum: ["credentials", "google"],
+      default: "credentials",
     },
     role: {
       type: String,
@@ -42,10 +49,11 @@ const userSchema = new Schema(
 );
 
 userSchema.pre("save", async function () {
-  if (this.isModified("password")) {
+  if (this.isModified("password") && this.password) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
+
 
 const UserModel = models.User || model<User>("User", userSchema);
 export default UserModel;
