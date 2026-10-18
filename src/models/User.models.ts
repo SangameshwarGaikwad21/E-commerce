@@ -23,16 +23,16 @@ const userSchema = new Schema(
       required: [true, "email is required"],
       unique: true,
     },
+    authProvider: {
+      type: String,
+      enum: ["credentials", "google"],
+      default: "credentials",
+    },
     password: {
       type: String,
       required: function (this: any) {
         return this.authProvider === "credentials";
       },
-    },
-    authProvider: {
-      type: String,
-      enum: ["credentials", "google"],
-      default: "credentials",
     },
     role: {
       type: String,

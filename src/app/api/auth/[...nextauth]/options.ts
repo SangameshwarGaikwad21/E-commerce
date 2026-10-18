@@ -74,20 +74,16 @@ export const authOptions: NextAuthOptions = {
       let dbUser = await UserModel.findOne({ email });
 
       if (!dbUser) {
-        const username =
-          user.name?.trim() || email.split("@")[0];
-
+      const username = user.name?.trim() || email.split("@")[0];
         dbUser = await UserModel.create({
           username,
           email,
           role: "user",
+          authProvider: "google",
         });
       }
-
-      // Use your MongoDB user ID, not Google's provider ID.
-      user.id = dbUser._id.toString();
-
-      return true;
+    user.id = dbUser._id.toString();
+    return true;
     },
 
     async jwt({ token, user, account }) {
