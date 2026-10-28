@@ -80,169 +80,31 @@ A modern full-stack E-Commerce application built with Next.js, MongoDB, NextAuth
 ### Deployment
 - Vercel
 
----
 
-## ⚙️ Environment Variables
+#  Screen Shoots:-
 
-Create a `.env.local` file in the root directory.
+# Registration and Login Page With google 
 
-```env
-# MongoDB
-MONGODB_URI=
+# Home Page 
 
-# NextAuth
-NEXTAUTH_URL=
-NEXTAUTH_SECRET=
+# Product Page
 
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
+# Add to card
 
-# Razorpay
-RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
-```
+# Users Profile 
 
----
 
-## 🔧 Installation
+## Admin Ralted thing 
 
-### Clone the Repository
+# Admin dashboard
 
-```bash
-git clone https://github.com/SangameshwarGaikwad21/E-commerce.git
-```
+# Create Product and upadte Product also
 
-### Navigate to Project Directory
+## Product related Things 
 
-```bash
-cd E-commerce
-```
+# All Product
+ 
+# Single Product
 
-### Install Dependencies
+# Payment Realted
 
-```bash
-npm install
-```
-
-### Configure Environment Variables
-
-Create `.env.local` and add the required credentials.
-
-### Start Development Server
-
-```bash
-npm run dev
-```
-
-Open:
-
-```bash
-http://localhost:3000
-```
-
----
-
-## 📸 Key Functionalities
-
-### User
-- Register/Login
-- Browse products
-- Add items to cart
-- Checkout products
-- Make secure payments
-- View orders
-
-### Admin
-- Manage products
-- Upload product images
-- Manage inventory
-- Track customer orders
-
----
-
-## 🔄 Application Flow
-
-```text
-User Login
-    │
-    ▼
-Browse Products
-    │
-    ▼
-Add to Cart
-    │
-    ▼
-Checkout
-    │
-    ▼
-Razorpay Payment
-    │
-    ▼
-Payment Verification
-    │
-    ▼
-Order Created
-```
-
----
-
-## 🌟 Performance Optimizations
-
-- Server-side rendering with Next.js
-- Image optimization
-- Cloudinary CDN delivery
-- Efficient MongoDB queries
-- Component reusability
-- Lazy loading where applicable
-
----
-
-## 🔐 Security Features
-
-- Secure authentication using NextAuth
-- Protected API routes
-- Environment variable protection
-- Payment verification
-- Session-based authentication
-- Input validation
-
----
-
-## 📈 Learning Outcomes
-
-This project demonstrates practical experience with:
-
-- Full-Stack Development
-- Authentication & Authorization
-- Payment Gateway Integration
-- Database Design
-- Cloud Storage Integration
-- API Development
-- State Management
-- Production Deployment
-
---
-
-## 👨‍💻 Developer
-
-### Sangam Gaikwad
-
-Passionate Full-Stack Developer focused on building scalable web applications using modern technologies.
-
-GitHub: https://github.com/SangameshwarGaikwad21
-
----
-
-## ⭐ Support
-
-If you found this project helpful, please consider giving it a ⭐ on GitHub.
-
-It helps the project reach more developers and motivates future improvements.
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License.
