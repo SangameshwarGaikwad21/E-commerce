@@ -119,7 +119,7 @@ export default function ProfilePage() {
 
               <button
                 type="button"
-                onClick={() => router.push("/userAddress")}
+                onClick={() => router.push("/useraddress")}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 text-sm font-semibold text-white shadow-lg shadow-indigo-700/25 transition hover:bg-indigo-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {address ? <Pencil size={16} /> : <Plus size={16} />}
