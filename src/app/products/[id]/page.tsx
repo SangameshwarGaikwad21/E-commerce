@@ -130,13 +130,12 @@ const Page = () => {
       ? Math.round(((discountPrice - price) / discountPrice) * 100)
       : 0;
 
-  const stock = (product as typeof product & { stock?: number }).stock;
-  const outOfStock = typeof stock === "number" && stock <= 0;
-  const lowStock = typeof stock === "number" && stock > 0 && stock <= 5;
+ // const stock = (product as typeof product & { stock?: number }).stock;
+//  const outOfStock = typeof stock === "number" && stock <= 0;
 
-//   const stock = (product as typeof product & { stock?: number }).stock;
-//   const outOfStock = false;   // was: typeof stock === "number" && stock <= 0
-//   const lowStock = false; 
+ // const lowStock = typeof stock === "number" && stock > 0 && stock <= 5;
+   const stock = (product as typeof product & { stock?: number }).stock;  const outOfStock = false;   // was: typeof stock === "number" && stock <= 0
+   const lowStock = false; 
 
   const handleAddToCart = () => {
     if (!session) return router.push("/login");

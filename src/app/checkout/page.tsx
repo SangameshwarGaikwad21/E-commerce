@@ -2,13 +2,26 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import { createOrder } from "@/redux/fetures/orderSlice";
 import type { AppDispatch } from "@/redux/store";
 import axiosInstance from "@/lib/axios";
 import toast from "react-hot-toast";
-import { CreditCard, Home, MapPin, PackageCheck, ShieldCheck } from "lucide-react";
+import {
+  Check,
+  CreditCard,
+  Home,
+  Loader2,
+  Lock,
+  MapPin,
+  PackageCheck,
+  Phone,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 
 type ProductItem = {
   _id?: string;
@@ -16,6 +29,7 @@ type ProductItem = {
   title: string;
   price: number;
   images?: string[];
+  image?: string;
 };
 
 type SavedAddress = {
@@ -73,6 +87,12 @@ declare global {
   }
 }
 
+const currency = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
+
 const loadRazorpayScript = () => {
   return new Promise<boolean>((resolve) => {
     if (window.Razorpay) {
@@ -100,6 +120,26 @@ const readStoredJson = <T,>(key: string): T | null => {
     return null;
   }
 };
+
+const paymentOptions: {
+  key: PaymentMethod;
+  title: string;
+  text: string;
+  icon: typeof CreditCard;
+}[] = [
+  {
+    key: "RAZORPAY",
+    title: "Online Payment",
+    text: "Pay securely with Razorpay.",
+    icon: CreditCard,
+  },
+  {
+    key: "COD",
+    title: "Cash on Delivery",
+    text: "Pay when your order arrives.",
+    icon: Home,
+  },
+];
 
 export default function Page() {
   const router = useRouter();
@@ -221,7 +261,7 @@ export default function Page() {
           address: `${address.street}, ${address.city}, ${address.state}`,
         },
         theme: {
-          color: "#10b981",
+          color: "#4338ca",
         },
         handler: async (response) => {
           try {
@@ -261,142 +301,318 @@ export default function Page() {
     }
   };
 
+  const shell =
+    "relative min-h-screen overflow-hidden bg-gradient-to-br from-indigo-100 via-slate-50 to-sky-100 px-4 py-10 sm:px-6";
+  const blobs = (
+    <>
+      <div className="pointer-events-none absolute -left-24 top-10 h-80 w-80 rounded-full bg-indigo-300/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-sky-300/30 blur-3xl" />
+    </>
+  );
+
+  /* ---------- loading skeleton ---------- */
   if (!product || !address) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white">
-        Loading checkout...
-      </div>
+      <section className={shell}>
+        {blobs}
+        <div className="relative mx-auto max-w-6xl">
+          <div className="h-40 animate-pulse rounded-3xl bg-indigo-200/60" />
+          <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="h-96 animate-pulse rounded-3xl bg-white shadow-xl shadow-indigo-900/5" />
+            <div className="h-80 animate-pulse rounded-3xl bg-white shadow-xl shadow-indigo-900/5" />
+          </div>
+          <p className="mt-6 text-center text-sm font-medium text-slate-500">
+            Loading checkout...
+          </p>
+        </div>
+      </section>
     );
   }
 
+  const productImage = product.images?.[0] || product.image;
+
+  const steps = [
+    { label: "Address", done: true },
+    { label: "Payment", done: false, active: true },
+    { label: "Confirmation", done: false },
+  ];
+
+  const statusIsError = /fail|cancel/i.test(paymentStep);
+
   return (
-    <section className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black px-4 py-12 text-white sm:px-6">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-blue-900/20 blur-3xl opacity-30" />
-        <div className="absolute top-[-100px] left-[-100px] h-[420px] w-[420px] rounded-full bg-purple-600/20 blur-[130px]" />
-        <div className="absolute bottom-[-120px] right-[-100px] h-[420px] w-[420px] rounded-full bg-pink-600/20 blur-[130px]" />
-      </div>
+    <section className={shell}>
+      {blobs}
 
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 shadow-2xl shadow-black/40 backdrop-blur-2xl sm:p-8">
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-purple-400">
-            Secure Checkout
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">
-            Complete your order
-          </h1>
+      <div className="relative mx-auto max-w-6xl">
+        {/* ================= HEADER ================= */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-3xl bg-indigo-700 p-8 text-white shadow-2xl shadow-indigo-900/10 sm:p-10"
+        >
+          <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full border-[40px] border-indigo-500/40" />
+          <div className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-indigo-500/30" />
 
-          <div className="mt-8 space-y-4">
-            <div className="rounded-3xl border border-white/10 bg-black/25 p-5">
-              <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-400">
-                  <PackageCheck size={22} />
-                </span>
-                <div>
-                  <p className="text-lg font-semibold">{product.title}</p>
-                  <p className="mt-1 text-2xl font-bold text-purple-400">
-                    Rs. {product.price}
-                  </p>
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.24em] text-amber-400">
+                <Lock size={14} /> Secure Checkout
+              </p>
+              <h1 className="mt-3 text-4xl font-extrabold">
+                Complete your order
+              </h1>
+              <p className="mt-2 text-indigo-100">
+                Review your item, confirm the address and choose how to pay.
+              </p>
+            </div>
+
+            {/* steps */}
+            <ol className="flex items-center gap-2 text-xs font-semibold">
+              {steps.map((s, i) => (
+                <li key={s.label} className="flex items-center gap-2">
+                  <span
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                      s.done
+                        ? "bg-amber-400 text-slate-900"
+                        : s.active
+                          ? "bg-white text-indigo-700"
+                          : "bg-white/20 text-indigo-100"
+                    }`}
+                  >
+                    {s.done ? <Check size={14} /> : i + 1}
+                  </span>
+                  <span
+                    className={
+                      s.done || s.active ? "text-white" : "text-indigo-200"
+                    }
+                  >
+                    {s.label}
+                  </span>
+                  {i < steps.length - 1 && (
+                    <span className="mx-1 h-px w-6 bg-white/30" />
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </motion.div>
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          {/* ================= LEFT ================= */}
+          <div className="space-y-5">
+            {/* product */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              className="rounded-3xl bg-white p-5 shadow-xl shadow-indigo-900/5"
+            >
+              <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-indigo-700">
+                <PackageCheck size={15} /> Your item
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 to-slate-100 p-2">
+                  {productImage ? (
+                    <img
+                      src={productImage}
+                      alt={product.title}
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <PackageCheck size={28} className="text-indigo-400" />
+                  )}
                 </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-black/25 p-5">
-              <div className="flex items-start gap-4">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-400/15 text-blue-300">
-                  <MapPin size={22} />
-                </span>
-                <div>
-                  <p className="font-semibold">{address.fullName}</p>
-                  <p className="mt-2 leading-7 text-white/65">
-                    {address.street}
-                    <br />
-                    {address.city}, {address.state} {address.pincode}
-                    <br />
-                    {address.phone}
+                <div className="min-w-0 flex-1">
+                  <p className="line-clamp-2 text-lg font-bold text-slate-900">
+                    {product.title}
                   </p>
+                  <p className="mt-1 text-sm text-slate-500">Qty 1</p>
                 </div>
+                <p className="text-xl font-extrabold text-indigo-700">
+                  {currency.format(product.price)}
+                </p>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="rounded-3xl border border-white/10 bg-black/25 p-5">
-              <h2 className="text-lg font-semibold">Payment method</h2>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("RAZORPAY")}
-                  className={`rounded-2xl border p-4 text-left transition ${
-                    paymentMethod === "RAZORPAY"
-                      ? "border-purple-500/50 bg-purple-500/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                  }`}
+            {/* address */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="rounded-3xl bg-white p-5 shadow-xl shadow-indigo-900/5"
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-indigo-700">
+                  <MapPin size={15} /> Delivering to
+                </p>
+                <Link
+                  href="/userAddress"
+                  className="rounded-lg px-3 py-1.5 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
                 >
-                  <CreditCard className="text-purple-400" size={22} />
-                  <p className="mt-3 font-semibold">Online Payment</p>
-                  <p className="mt-1 text-sm text-white/55">
-                    Pay securely with Razorpay.
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("COD")}
-                  className={`rounded-2xl border p-4 text-left transition ${
-                    paymentMethod === "COD"
-                      ? "border-purple-500/50 bg-purple-500/10"
-                      : "border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
-                  }`}
-                >
-                  <Home className="text-purple-400" size={22} />
-                  <p className="mt-3 font-semibold">Cash on Delivery</p>
-                  <p className="mt-1 text-sm text-white/55">
-                    Pay when your order arrives.
-                  </p>
-                </button>
+                  Change
+                </Link>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <aside className="h-fit rounded-[2rem] border border-white/10 bg-white/[0.06] p-6 shadow-2xl shadow-black/40 backdrop-blur-2xl sm:p-8">
-          <h2 className="text-2xl font-semibold">Order Summary</h2>
-
-          <div className="mt-6 space-y-4 text-sm">
-            <div className="flex justify-between text-white/65">
-              <span>Subtotal</span>
-              <span>Rs. {product.price}</span>
-            </div>
-            <div className="flex justify-between text-white/65">
-              <span>Delivery</span>
-              <span className="text-purple-400">Free</span>
-            </div>
-            <div className="border-t border-white/10 pt-4">
-              <div className="flex justify-between text-lg font-semibold">
-                <span>Total</span>
-                <span>Rs. {product.price}</span>
+              <div className="rounded-2xl border border-slate-200 bg-indigo-50/50 p-4">
+                <p className="font-bold text-slate-900">{address.fullName}</p>
+                <p className="mt-1 text-sm leading-6 text-slate-600">
+                  {address.street}
+                  <br />
+                  {address.city}, {address.state} – {address.pincode}
+                </p>
+                <p className="mt-2 flex items-center gap-1.5 text-sm text-slate-500">
+                  <Phone size={14} /> {address.phone}
+                </p>
               </div>
-            </div>
+            </motion.div>
+
+            {/* payment */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="rounded-3xl bg-white p-5 shadow-xl shadow-indigo-900/5"
+            >
+              <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-indigo-700">
+                <CreditCard size={15} /> Payment method
+              </p>
+
+              <div className="grid gap-3 sm:grid-cols-2" role="radiogroup">
+                {paymentOptions.map(({ key, title, text, icon: Icon }) => {
+                  const selected = paymentMethod === key;
+
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      disabled={loading}
+                      onClick={() => setPaymentMethod(key)}
+                      className={`relative rounded-2xl border-2 p-4 text-left transition disabled:cursor-not-allowed ${
+                        selected
+                          ? "border-indigo-700 bg-indigo-50 shadow-md shadow-indigo-700/10"
+                          : "border-slate-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/50"
+                      }`}
+                    >
+                      <span
+                        className={`absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full border-2 transition ${
+                          selected
+                            ? "border-indigo-700 bg-indigo-700 text-white"
+                            : "border-slate-300"
+                        }`}
+                      >
+                        {selected && <Check size={13} />}
+                      </span>
+
+                      <span
+                        className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                          selected
+                            ? "bg-indigo-700 text-white"
+                            : "bg-indigo-50 text-indigo-700"
+                        }`}
+                      >
+                        <Icon size={21} />
+                      </span>
+                      <p className="mt-3 font-bold text-slate-900">{title}</p>
+                      <p className="mt-1 text-sm text-slate-500">{text}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
           </div>
 
-          <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
-            <ShieldCheck className="shrink-0 text-purple-400" size={21} />
-            <span>{paymentStep}</span>
-          </div>
-
-          <button
-            onClick={handlePlaceOrder}
-            disabled={loading}
-            className="mt-6 flex h-12 w-full items-center justify-center rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 px-5 text-base font-bold text-white shadow-xl shadow-purple-950/30 transition hover:opacity-90 disabled:cursor-not-allowed disabled:bg-none disabled:bg-white/20 disabled:text-white/50"
+          {/* ================= SUMMARY ================= */}
+          <motion.aside
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="h-fit rounded-3xl bg-white p-6 shadow-xl shadow-indigo-900/5 lg:sticky lg:top-24"
           >
-            {loading
-              ? paymentMethod === "RAZORPAY"
-                ? "Processing Payment..."
-                : "Placing Order..."
-              : paymentMethod === "RAZORPAY"
-                ? "Pay and Place Order"
-                : "Place COD Order"}
-          </button>
-        </aside>
+            <h2 className="text-xl font-extrabold text-slate-900">
+              Order summary
+            </h2>
+
+            <div className="mt-5 space-y-3 text-sm">
+              <div className="flex justify-between text-slate-500">
+                <span>Subtotal</span>
+                <span className="font-semibold text-slate-700">
+                  {currency.format(product.price)}
+                </span>
+              </div>
+              <div className="flex justify-between text-slate-500">
+                <span>Delivery</span>
+                <span className="font-semibold text-emerald-600">Free</span>
+              </div>
+            </div>
+
+            <div className="my-5 border-t border-dashed border-slate-200" />
+
+            <div className="flex items-center justify-between">
+              <span className="text-base font-bold text-slate-900">Total</span>
+              <span className="text-2xl font-extrabold text-indigo-700">
+                {currency.format(product.price)}
+              </span>
+            </div>
+
+            {/* status */}
+            <div
+              className={`mt-6 flex items-center gap-3 rounded-2xl p-4 text-sm font-medium ${
+                statusIsError
+                  ? "bg-red-50 text-red-700"
+                  : loading
+                    ? "bg-indigo-50 text-indigo-700"
+                    : "bg-slate-50 text-slate-600"
+              }`}
+            >
+              {loading ? (
+                <Loader2 size={20} className="shrink-0 animate-spin" />
+              ) : (
+                <ShieldCheck
+                  size={20}
+                  className={`shrink-0 ${statusIsError ? "text-red-500" : "text-indigo-600"}`}
+                />
+              )}
+              <span>{paymentStep}</span>
+            </div>
+
+            <motion.button
+              onClick={handlePlaceOrder}
+              disabled={loading}
+              whileTap={{ scale: 0.98 }}
+              whileHover={{ scale: 1.01 }}
+              className="mt-5 flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 py-4 text-base font-bold text-white shadow-lg shadow-indigo-700/30 transition hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? (
+                <>
+                  <Loader2 size={18} className="animate-spin" />
+                  {paymentMethod === "RAZORPAY"
+                    ? "Processing Payment..."
+                    : "Placing Order..."}
+                </>
+              ) : (
+                <>
+                  <Lock size={17} />
+                  {paymentMethod === "RAZORPAY"
+                    ? `Pay ${currency.format(product.price)}`
+                    : "Place COD Order"}
+                </>
+              )}
+            </motion.button>
+
+            <div className="mt-6 space-y-2 border-t border-slate-100 pt-5 text-xs text-slate-500">
+              <p className="flex items-center gap-2">
+                <ShieldCheck size={15} className="text-indigo-600" /> Payments
+                are encrypted and secure
+              </p>
+              <p className="flex items-center gap-2">
+                <Truck size={15} className="text-indigo-600" /> Free delivery
+                on this order
+              </p>
+            </div>
+          </motion.aside>
+        </div>
       </div>
     </section>
   );
